@@ -40,7 +40,7 @@ def _main():
                     'workers': 2
                 },
                 'content': {
-                    'root': as_path
+                    'root': sys.argv[1]
                 }
             }).run()
 
