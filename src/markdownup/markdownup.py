@@ -15,7 +15,7 @@ class MarkdownUp:
     def __init__(self, config):
         self.config = config
         self.root = Path(config['content']['root']).resolve()
-        self.theme = Theme(config['content']['theme'])
+        self.theme = Theme(config['main']['theme'])
 
     def wsgi_app(self, environ, start_response):
 
@@ -51,7 +51,7 @@ class MarkdownUp:
 
                 html = chevron.render(self.theme.frame, {
                     'title': self.get_title(source),
-                    'content': markdown.markdown(source, extensions=['extra', 'codehilite'])
+                    'content': markdown.markdown(source, extensions=self.config['markdown']['extensions'])
                 })
 
                 return Response(

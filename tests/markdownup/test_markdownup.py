@@ -7,10 +7,8 @@ from markdownup.markdownup import MarkdownUp
 def test_get():
 
     markdownup = MarkdownUp(extend_default_config({
-        'content': {
-            'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root'),
-            'theme': 'bare'
-        }
+        'main': {'theme': 'bare'},
+        'content': {'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root')}
     }))
 
     response = markdownup.get('index.md')
@@ -22,9 +20,7 @@ def test_get():
 def test_prevent_access_outside_root():
 
     markdownup = MarkdownUp(extend_default_config({
-        'content': {
-            'root': '/tmp'
-        }
+        'content': {'root': '/tmp'}
     }))
 
     response = markdownup.get('../etc/passwd')
@@ -33,13 +29,11 @@ def test_prevent_access_outside_root():
     assert next(response.body, None) is None
 
 
-def test_with_template():
+def test_with_fs_theme():
 
     markdownup = MarkdownUp(extend_default_config({
-        'content': {
-            'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root'),
-            'theme': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'test_theme')
-        }
+        'main': {'theme': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'test_theme')},
+        'content': {'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root')}
     }))
 
     response = markdownup.get('index.md')
@@ -51,10 +45,8 @@ def test_with_template():
 def test_serve_non_markdown_file():
 
     markdownup = MarkdownUp(extend_default_config({
-        'content': {
-            'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root'),
-            'theme': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'test_theme')
-        }
+        'main': {'theme': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'test_theme')},
+        'content': {'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root')}
     }))
 
     response = markdownup.get('/frame.css')
