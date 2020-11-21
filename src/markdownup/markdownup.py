@@ -7,7 +7,7 @@ import chevron
 import markdown
 from markdownup.path_resolver import resolve_str
 
-_title_pattern = re.compile(r'^#\s?(.*)')
+_title_pattern = re.compile(r'^#\s?(.*)', re.MULTILINE)
 
 
 class MarkdownUp:
@@ -96,7 +96,7 @@ class MarkdownUp:
 
     @staticmethod
     def get_title(md: str):
-        match = _title_pattern.match(md)
+        match = _title_pattern.search(md)
         return match.group(1) if match else 'Untitled document'
 
 

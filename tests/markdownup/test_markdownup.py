@@ -53,3 +53,16 @@ def test_serve_non_markdown_file():
 
     assert response.status == '200 OK'
     assert next(response.body).decode('UTF-8') == 'p { color: #111; }'
+
+
+def test_title_not_on_first_line():
+
+    markdownup = MarkdownUp(extend_default_config({
+        'main': {'theme': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'test_theme')},
+        'content': {'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root')}
+    }))
+
+    response = markdownup.get('title_not_on_first_line.md')
+
+    assert response.status == '200 OK'
+    assert next(response.body).decode('UTF-8') == 'Title goes here: Title\n'
