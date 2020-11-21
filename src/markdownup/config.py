@@ -1,15 +1,22 @@
 from copy import deepcopy
 
 default_config = {
+    'main': {
+        'theme': 'default'
+    },
     'wsgi': {
         'bind': '127.0.0.1:8080',
         'workers': 1
     },
     'content': {
-        'theme': 'default',
         'indices': [
             'README.md',
             'index.md'
+        ]
+    },
+    'markdown': {
+        'extensions': [
+            'extra'
         ]
     }
 }
