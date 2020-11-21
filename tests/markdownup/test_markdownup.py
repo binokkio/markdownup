@@ -8,7 +8,10 @@ def test_get():
 
     markdownup = MarkdownUp(extend_default_config({
         'main': {'theme': 'bare'},
-        'content': {'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root')}
+        'content': {
+            'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root'),
+            'indices': []
+        }
     }))
 
     response = markdownup.get('index.md')
@@ -20,10 +23,10 @@ def test_get():
 def test_prevent_access_outside_root():
 
     markdownup = MarkdownUp(extend_default_config({
-        'content': {'root': '/tmp'}
+        'content': {'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root' / 'subdir')}
     }))
 
-    response = markdownup.get('../etc/passwd')
+    response = markdownup.get('../index.md')
 
     assert response.status == '400 Bad Request'
     assert next(response.body, None) is None
@@ -33,7 +36,10 @@ def test_with_fs_theme():
 
     markdownup = MarkdownUp(extend_default_config({
         'main': {'theme': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'test_theme')},
-        'content': {'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root')}
+        'content': {
+            'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root'),
+            'indices': []
+        }
     }))
 
     response = markdownup.get('index.md')

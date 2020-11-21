@@ -2,6 +2,25 @@ body {
     font-family: sans-serif;
     color: #222;
     background-color: #ececec;
+    display: grid;
+    grid-template-columns: max-content 1fr;
+}
+
+.menu {
+    grid-column-start: 1;
+    padding: 0 48px 0 24px;
+}
+
+.menu ul {
+    padding-left: 12px;
+}
+
+.menu li {
+    padding: 2px;
+}
+
+.content {
+    grid-column-start: 2;
 }
 
 .content > * {
@@ -43,14 +62,14 @@ pre {
     filter: drop-shadow(0px 0px 6px #ccc);
 }
 
-ul {
-  list-style: none; /* Remove default bullets */
+.content ul {
+    list-style: none; /* Remove default bullets */
 }
 
-ul li::before {
-  content: "\2022";  /* Add content: \2022 is the CSS Code/unicode for a bullet */
-  color: #444;  /* Change the color */
-  display: inline-block;  /* Needed to add space between the bullet and the text */
-  width: 1em;  /* Also needed for space (tweak if needed) */
-  margin-left: -1em;  /* Also needed for space (tweak if needed) */
+.content ul li::before {
+    content: "\2022";  /* Add content: \2022 is the CSS Code/unicode for a bullet */
+    color: #444;  /* Change the color */
+    display: inline-block;  /* Needed to add space between the bullet and the text */
+    width: 1em;  /* Also needed for space (tweak if needed) */
+    margin-left: -1em;  /* Also needed for space (tweak if needed) */
 }
