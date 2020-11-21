@@ -16,7 +16,8 @@ default_config = {
     },
     'markdown': {
         'extensions': [
-            'extra'
+            'extra',
+            'codehilite'
         ]
     }
 }
