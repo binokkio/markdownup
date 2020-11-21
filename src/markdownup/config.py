@@ -6,7 +6,11 @@ default_config = {
         'workers': 1
     },
     'content': {
-        'theme': 'default'
+        'theme': 'default',
+        'indices': [
+            'README.md',
+            'index.md'
+        ]
     }
 }
 
