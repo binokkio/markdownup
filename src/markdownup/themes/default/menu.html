@@ -1,0 +1,17 @@
+<ul>
+    {{#directories}}
+        <li>
+            {{#index_file}}
+                <a href="{{index_request_path}}">{{title}}</a>
+            {{/index_file}}
+            {{^index_file}}
+                {{name}}
+            {{/index_file}}
+            {{>menu}}
+        </li>
+    {{/directories}}
+
+    {{#files}}
+        <li><a href="{{request_path}}">{{title}}</a></li>
+    {{/files}}
+</ul>

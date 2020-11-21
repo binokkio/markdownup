@@ -12,6 +12,11 @@
     </head>
 
     <body>
+        <div class="menu">
+            {{#directory}}
+                {{>menu}}
+            {{/directory}}
+        </div>
         <div class="content">
             {{{content}}}
         </div>
