@@ -1,37 +1,48 @@
 from pathlib import Path
 
+from markdownup.config import extend_default_config
 from markdownup.markdownup import MarkdownUp
 
 
 def test_get():
 
-    content_root = Path(__file__) / '..' / '..' / '..' / 'test_resources' / 'markdown_repository_root'
-    content_root = content_root.resolve()
-
-    markdownup = MarkdownUp({
+    markdownup = MarkdownUp(extend_default_config({
         'content': {
-            'root': str(content_root)
+            'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root'),
+            'theme': 'bare'
         }
-    })
+    }))
 
     response = markdownup.get('index.md')
 
     assert response.status == '200 OK'
-    assert next(response.body).decode('UTF-8') == '<h1>Hello, World!</h1>'
+    assert next(response.body).decode('UTF-8') == '<h1>Hello, World!</h1>\n'
 
 
 def test_prevent_access_outside_root():
 
-    content_root = Path(__file__) / '..' / 'test_resources' / 'markdown_repository_root'
-    content_root = content_root.resolve()
-
-    markdownup = MarkdownUp({
+    markdownup = MarkdownUp(extend_default_config({
         'content': {
-            'root': str(content_root)
+            'root': '/tmp'
         }
-    })
+    }))
 
-    response = markdownup.get('../index.md')
+    response = markdownup.get('../etc/passwd')
 
     assert response.status == '400 Bad Request'
     assert next(response.body, None) is None
+
+
+def test_with_template():
+
+    markdownup = MarkdownUp(extend_default_config({
+        'content': {
+            'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root'),
+            'theme': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'test_theme')
+        }
+    }))
+
+    response = markdownup.get('index.md')
+
+    assert response.status == '200 OK'
+    assert next(response.body).decode('UTF-8') == 'Title goes here: Hello, World!\n'

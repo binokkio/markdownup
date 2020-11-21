@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Dict
 
 import gunicorn.app.base
+from markdownup.config import extend_default_config
 from markdownup.markdownup import MarkdownUp
 
 
@@ -34,15 +35,8 @@ def _main():
     if len(sys.argv) == 2:
         as_path = Path(sys.argv[1])
         if as_path.is_dir():
-            WsgiApplication({
-                'wsgi': {
-                    'bind': '127.0.0.1:8080',
-                    'workers': 2
-                },
-                'content': {
-                    'root': sys.argv[1]
-                }
-            }).run()
+            config = extend_default_config({'content': {'root': sys.argv[1]}})
+            WsgiApplication(config).run()
 
 
 if __name__ == '__main__':

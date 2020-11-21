@@ -1,6 +1,11 @@
+import re
 from pathlib import Path
 
+import chevron
 import markdown
+
+
+_title_pattern = re.compile(r'^#\s?(.*)')
 
 
 class MarkdownUp:
@@ -8,6 +13,7 @@ class MarkdownUp:
     def __init__(self, config):
         self.config = config
         self.root = Path(config['content']['root']).resolve()
+        self.theme = _read_theme(config['content']['theme'])
 
     def wsgi_app(self, environ, start_response):
 
@@ -37,13 +43,24 @@ class MarkdownUp:
             path = path / 'index.md'  # TODO configurable, multiple options
 
         with path.open('r') as file:
+
             source = file.read()
-            html = markdown.markdown(source)
+
+            html = chevron.render(self.theme, {
+                'title': self.get_title(source),
+                'content': markdown.markdown(source)
+            })
+
             return Response(
                 '200 OK',
                 [('Content-Type', 'text/html')],
-                (bytes(b, 'UTF-8') for b in html.splitlines())
+                (bytes(b, 'UTF-8') for b in html.splitlines(keepends=True))
             )
+
+    @staticmethod
+    def get_title(md: str):
+        match = _title_pattern.match(md)
+        return match.group(1) if match else 'Untitled document'
 
 
 class Response:
@@ -51,3 +68,19 @@ class Response:
         self.status = status
         self.headers = headers or []
         self.body = body or iter(())
+
+
+def _read_theme(theme: str):
+
+    path = Path(theme)
+    if not path.is_dir():
+        path = Path(__file__).parent / 'themes' / theme
+        if not path.is_dir():
+            raise ValueError(f'Theme "{theme}" not found')  # TODO improve feedback
+
+    path = path / 'frame.html'
+
+    if not path.is_file():
+        raise ValueError('Theme does not contain a file named "frame.html"')
+
+    return path.read_text()
