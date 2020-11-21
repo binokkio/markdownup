@@ -46,3 +46,18 @@ def test_with_template():
 
     assert response.status == '200 OK'
     assert next(response.body).decode('UTF-8') == 'Title goes here: Hello, World!\n'
+
+
+def test_serve_non_markdown_file():
+
+    markdownup = MarkdownUp(extend_default_config({
+        'content': {
+            'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root'),
+            'theme': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'test_theme')
+        }
+    }))
+
+    response = markdownup.get('/frame.css')
+
+    assert response.status == '200 OK'
+    assert next(response.body).decode('UTF-8') == 'p { color: #111; }'
