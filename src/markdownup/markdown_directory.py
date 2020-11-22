@@ -1,4 +1,3 @@
-import mimetypes
 from pathlib import Path
 from typing import List
 
@@ -16,12 +15,12 @@ class MarkdownDirectory:
         self.directory_map = {}
         self.file_map = {}
         self.index = None
-        self.directories = []
-        self.files = []
+        self.directories = MustacheList()
+        self.files = MustacheList()
 
         for entry in path.iterdir():
             name = entry.name
-            if entry.is_file() and mimetypes.guess_type(name)[0] == 'text/markdown':
+            if entry.is_file() and name.endswith('.md'):
                 if name in config['content']['indices'] and not self.index:
                     self.index = MarkdownFile(config, entry, depth, is_index=True)
                 else:
@@ -33,6 +32,8 @@ class MarkdownDirectory:
                 if sub_directory.directories or sub_directory.files or sub_directory.index:
                     self.directory_map[name] = sub_directory
                     self.directories.append(sub_directory)
+
+        print(f'Processed {path}')
 
     def resolve(self, path: str):
         return self._resolve(list(Path(path).parts))
@@ -47,3 +48,7 @@ class MarkdownDirectory:
             return self.directory_map[next_part]._resolve(parts)
         else:
             return None
+
+
+class MustacheList(list):
+    _CHEVRON_return_scope_when_falsy = True

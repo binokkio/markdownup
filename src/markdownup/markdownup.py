@@ -17,6 +17,8 @@ class MarkdownUp:
 
     def wsgi_app(self, environ, start_response):
 
+        print(environ['REQUEST_METHOD'] + ' ' + environ['PATH_INFO'])
+
         if environ['REQUEST_METHOD'] != 'GET':
             start_response('405 Method Not Allowed', 'text/plain')
             return ['405 Method Not Allowed']
