@@ -12,7 +12,8 @@ default_config = {
         'indices': [
             'README.md',
             'index.md'
-        ]
+        ],
+        'gits': {}
     },
     'markdown': {
         'extensions': [

@@ -15,6 +15,7 @@ setuptools.setup(
     install_requires=[
         'chevron',
         'gunicorn',
-        'markdown'
+        'markdown',
+        'pyyaml'
     ]
 )
