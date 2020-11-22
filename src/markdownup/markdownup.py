@@ -42,6 +42,7 @@ class MarkdownUp:
                 partials_ext='html',
                 data={
                     'title': markdown_file.title,
+                    'file': markdown_file,
                     'content': markdown.markdown(source, extensions=self.config['markdown']['extensions']),
                     'root': self.root
                 }
@@ -55,7 +56,7 @@ class MarkdownUp:
 
         try:
             path = resolve_str(self.theme.path, path)
-            if not path.exists():
+            if not path.is_file():
                 return Response('404 Not Found')
         except ValueError:
             return Response('400 Bad Request')

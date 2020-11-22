@@ -37,8 +37,14 @@ body {
     padding: 0 24px;
 }
 
-.content {
+.document {
     grid-column: 2;
+}
+
+.version {
+    margin: 32px;
+    text-align: center;
+    color: #aaa;
 }
 
 .content > * {
