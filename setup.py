@@ -4,7 +4,7 @@ setuptools.setup(
     name='markdownup',
     description='Markdown server',
     keywords=['markdown', 'server'],
-    version='0.0.2',
+    version='0.0.3',
     author='Binokkio',
     author_email='binokkio@b.nana.technology',
     url='https://github.com/binokkio/markdownup',
