@@ -1,1 +1,1 @@
-include markdownup/themes
+include src/markdownup/themes/**/*
