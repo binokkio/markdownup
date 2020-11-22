@@ -1,17 +1,19 @@
 <ul>
     {{#directories}}
         <li>
-            {{#index_file}}
-                <a href="{{index_request_path}}">{{title}}</a>
-            {{/index_file}}
-            {{^index_file}}
+            {{#index}}
+                <a href="{{request_path}}">{{title}}</a>
+            {{/index}}
+            {{^index}}
                 {{name}}
-            {{/index_file}}
+            {{/index}}
             {{>menu}}
         </li>
     {{/directories}}
 
     {{#files}}
-        <li><a href="{{request_path}}">{{title}}</a></li>
+        <li>
+            <a href="{{request_path}}">{{title}}</a>
+        </li>
     {{/files}}
 </ul>

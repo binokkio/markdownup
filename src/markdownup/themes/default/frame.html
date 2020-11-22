@@ -12,14 +12,24 @@
     </head>
 
     <body>
-        <div class="menu">
-            {{#directory}}
+
+        {{#root}}
+
+            {{#index}}
+                <div class="header">
+                    <a href="{{request_path}}">{{title}}</a>
+                </div>
+            {{/index}}
+
+            <div class="menu">
                 {{>menu}}
-            {{/directory}}
-        </div>
+            </div>
+
+        {{/root}}
+
         <div class="content">
             {{{content}}}
         </div>
-    </body>
 
+    </body>
 </html>

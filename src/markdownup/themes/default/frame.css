@@ -1,51 +1,71 @@
 body {
+
+    margin: 0;
+    padding: 48px 0 0 0;
+
     font-family: sans-serif;
     color: #222;
     background-color: #ececec;
+
     display: grid;
     grid-template-columns: max-content 1fr;
+    gap: 16px;
+}
+
+.header {
+    z-index: 1;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 48px;
+    padding: 0 32px;
+    background-color: #282838;
+    filter: drop-shadow(0px 0px 6px #666);
+}
+
+.header a {
+    line-height: 48px;
+    color: #f8f8f8;
+    font-size: 1.5em;
+    font-weight: 900;
+    text-decoration: none;
 }
 
 .menu {
-    grid-column-start: 1;
-    padding: 0 48px 0 24px;
-}
-
-.menu ul {
-    padding-left: 12px;
-}
-
-.menu li {
-    padding: 2px;
+    grid-column: 1;
+    padding: 0 24px;
 }
 
 .content {
-    grid-column-start: 2;
+    grid-column: 2;
 }
 
 .content > * {
-    margin: 20px;
+    margin: 24px;
+}
+
+h1, h2, h3, h4, h5, h6, th {
+    text-align: left;
+    color: #383f38;
+    background-color: #f8f8f8;
 }
 
 h1, h2, h3, h4, h5, h6 {
-    color: #383f38;
-    padding: 5px 10px;
-    margin: 10px!important;
-    background-color: #f8f8f8;
+    margin: 32px 12px 12px 12px !important;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    filter: drop-shadow(0px 0px 6px #ccc);
+}
+
+table, pre {
+    background-color: #f2f2f2;
     border: 1px solid #ccc;
     filter: drop-shadow(0px 0px 6px #ccc);
 }
 
 table {
     border-collapse: collapse;
-    background-color: #f2f2f2;
-    border: 1px solid #ccc;
-    filter: drop-shadow(0px 0px 6px #ccc);
-}
-
-th {
-    color: #383f38;
-    text-align: left;
 }
 
 th, td {
@@ -55,21 +75,33 @@ th, td {
 }
 
 pre {
+    padding: 6px 12px;
     font-size: 1.1em;
-    padding: 5px 10px;
-    background-color: #f2f2f2;
-    border: 1px solid #ccc;
-    filter: drop-shadow(0px 0px 6px #ccc);
 }
 
-.content ul {
+ol {
+    padding-left: 20px;
+}
+
+ul {
     list-style: none; /* Remove default bullets */
+    padding-left: 12px;
 }
 
-.content ul li::before {
+ul li, ol li {
+    padding: 2px;
+}
+
+ul li::before {
     content: "\2022";  /* Add content: \2022 is the CSS Code/unicode for a bullet */
     color: #444;  /* Change the color */
     display: inline-block;  /* Needed to add space between the bullet and the text */
     width: 1em;  /* Also needed for space (tweak if needed) */
     margin-left: -1em;  /* Also needed for space (tweak if needed) */
+    position: relative;
+    top: 1px;
+}
+
+a {
+    color: blue;
 }

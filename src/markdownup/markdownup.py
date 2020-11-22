@@ -3,7 +3,7 @@ from pathlib import Path
 
 import chevron
 import markdown
-from markdownup.markdown_directory import MarkdownDirectory, MarkdownFile
+from markdownup.markdown_directory import MarkdownDirectory
 from markdownup.path_resolver import resolve_str
 from markdownup.theme import Theme
 
@@ -34,16 +34,16 @@ class MarkdownUp:
 
         if markdown_file:
 
-            source = markdown_file.path.read_text()
+            source = markdown_file.read()
 
             html = chevron.render(
                 template=self.theme.frame,
                 partials_path=str(self.theme.path),
                 partials_ext='html',
                 data={
-                    'title': MarkdownFile.get_title(source),
+                    'title': markdown_file.title,
                     'content': markdown.markdown(source, extensions=self.config['markdown']['extensions']),
-                    'directory': self.root
+                    'root': self.root
                 }
             )
 

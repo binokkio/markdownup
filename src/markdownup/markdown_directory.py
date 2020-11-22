@@ -11,27 +11,26 @@ class MarkdownDirectory:
 
         self.config = config
         self.path = path
+        self.name = path.name
         self.depth = depth
         self.directory_map = {}
         self.file_map = {}
-        self.index_file = None
-        self.name = path.name
+        self.index = None
         self.directories = []
         self.files = []
 
-        # index
         for entry in path.iterdir():
             name = entry.name
             if entry.is_file() and mimetypes.guess_type(name)[0] == 'text/markdown':
-                markdown_file = MarkdownFile(entry, depth)
-                if name in config['content']['indices'] and not self.index_file:
-                    self.index_file = markdown_file
+                if name in config['content']['indices'] and not self.index:
+                    self.index = MarkdownFile(config, entry, depth, is_index=True)
                 else:
+                    markdown_file = MarkdownFile(config, entry, depth)
                     self.file_map[name] = markdown_file
                     self.files.append(markdown_file)
             elif entry.is_dir():
                 sub_directory = MarkdownDirectory(config, entry, depth + 1)
-                if sub_directory.directories or sub_directory.files or sub_directory.index_file:
+                if sub_directory.directories or sub_directory.files or sub_directory.index:
                     self.directory_map[name] = sub_directory
                     self.directories.append(sub_directory)
 
@@ -40,7 +39,7 @@ class MarkdownDirectory:
 
     def _resolve(self, parts: List[str]):
         if len(parts) == 0:
-            return self.index_file
+            return self.index
         next_part = parts.pop(0)
         if next_part in self.file_map:
             return self.file_map[next_part]
