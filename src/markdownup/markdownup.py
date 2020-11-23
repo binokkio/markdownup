@@ -1,5 +1,4 @@
 import mimetypes
-from pathlib import Path
 
 import chevron
 import markdown
@@ -12,8 +11,8 @@ class MarkdownUp:
 
     def __init__(self, config):
         self.config = config
-        self.root = MarkdownDirectory(config, Path(config['content']['root']).resolve())
-        self.theme = Theme(config['main']['theme'])
+        self.root = MarkdownDirectory(config)
+        self.theme = Theme(config)
 
     def wsgi_app(self, environ, start_response):
 

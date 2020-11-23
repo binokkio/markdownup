@@ -3,8 +3,8 @@ from pathlib import Path
 
 class Theme:
 
-    def __init__(self, theme: str):
-        self.path = self._resolve_path(theme)
+    def __init__(self, config):
+        self.path = self._resolve_path(config['main']['theme'])
         self.frame = self._read_frame()
         self.partials = self._read_partials()
 

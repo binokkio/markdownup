@@ -6,7 +6,9 @@ from markdownup.markdown_file import MarkdownFile
 
 class MarkdownDirectory:
 
-    def __init__(self, config, path: Path, depth: int = 0):
+    def __init__(self, config, path: Path = None, depth: int = 0):
+
+        path = path or Path(config['content']['root']).resolve()
 
         self.config = config
         self.path = path
