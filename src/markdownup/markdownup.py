@@ -57,7 +57,8 @@ class MarkdownUp:
             )
 
         try:
-            path = resolve_str(self.theme.path, path)
+            path = resolve_str(self.root.path, path) or \
+                   resolve_str(self.theme.path, path)
             if not path.is_file():
                 return Response('404 Not Found')
         except ValueError:

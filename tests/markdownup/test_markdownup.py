@@ -72,3 +72,36 @@ def test_title_not_on_first_line():
 
     assert response.status == '200 OK'
     assert next(response.body).decode('UTF-8') == 'Title goes here: Title\n'
+
+
+def test_hidden_directory_request_yields_400():
+
+    markdownup = MarkdownUp(extend_default_config({
+        'content': {'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root')}
+    }))
+
+    response = markdownup.get('.hidden/hidden.md')
+
+    assert response.status == '400 Bad Request'
+
+
+def test_hidden_file_request_yields_400():
+
+    markdownup = MarkdownUp(extend_default_config({
+        'content': {'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root')}
+    }))
+
+    response = markdownup.get('.hidden.md')
+
+    assert response.status == '400 Bad Request'
+
+
+def test_get_asset():
+
+    markdownup = MarkdownUp(extend_default_config({
+        'content': {'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root')}
+    }))
+
+    response = markdownup.get('dummy-asset.jpg')
+
+    assert response.status == '200 OK'
