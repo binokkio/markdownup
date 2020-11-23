@@ -19,6 +19,8 @@ class MarkdownDirectory:
         self.files = MustacheList()
 
         for entry in path.iterdir():
+            if entry.name.startswith('.'):
+                continue
             name = entry.name
             if entry.is_file() and name.endswith('.md'):
                 if name in config['content']['indices'] and not self.index:

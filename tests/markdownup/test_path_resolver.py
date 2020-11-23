@@ -5,17 +5,17 @@ from markdownup.path_resolver import resolve
 
 
 def test_resolve_relative():
-    root = Path('/tmp')
-    offset = Path('relative.md')
+    root = Path('/dev')
+    offset = Path('null')
     result = resolve(root, offset)
-    assert result == Path('/tmp/relative.md')
+    assert result == Path('/dev/null')
 
 
 def test_resolve_absolute():
-    root = Path('/tmp')
-    offset = Path('/absolute.md')
+    root = Path('/dev')
+    offset = Path('/null')
     result = resolve(root, offset)
-    assert result == Path('/tmp/absolute.md')
+    assert result == Path('/dev/null')
 
 
 def test_resolve_dot_dot():
