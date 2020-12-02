@@ -25,7 +25,7 @@ def _main():
 
     if len(sys.argv) > 2:
         if sys.argv[1] == '--start-config':
-            config = extend_default_config({'content': {'root': ''}})
+            config = extend_default_config({'content': {'root': '.'}})
             config = yaml.dump(config)
             with open(sys.argv[2], 'w') as file:
                 file.write(config)
