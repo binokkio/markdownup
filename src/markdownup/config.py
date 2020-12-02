@@ -20,6 +20,10 @@ default_config = {
             'extra',
             'codehilite'
         ]
+    },
+    'access': {
+        r'.*/\.': False,  # nobody has access to hidden files and directories
+        r'.*': True  # everybody has access to everything else
     }
 }
 
