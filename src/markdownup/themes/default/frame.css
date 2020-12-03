@@ -64,6 +64,10 @@ h1, h2, h3, h4, h5, h6 {
     filter: drop-shadow(0px 0px 6px #ccc);
 }
 
+a {
+    color: blue;
+}
+
 table, pre {
     background-color: #f2f2f2;
     border: 1px solid #ccc;
@@ -92,13 +96,43 @@ ol {
 ul {
     list-style: none; /* Remove default bullets */
     padding-left: 12px;
+    overflow: hidden; /* Specifically for the .menu li's, but not causing any trouble here */
 }
 
-ul li, ol li {
+li {
     padding: 2px;
 }
 
-ul li::before {
+.menu li > input {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 0;
+    height: 0;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    border-left: 8px solid #444;
+    cursor: pointer;
+    vertical-align: middle;
+    transition: transform .2s;
+}
+
+.menu li > input:checked {
+    transform: rotate(45deg);
+}
+
+.menu li > input:not(:checked) ~ ul {
+    max-height: 0px;
+}
+
+.menu label {
+    cursor: pointer;
+}
+
+.menu a:only-child {
+    margin-left: 20px;
+}
+
+.document li::before {
     content: "\2022";  /* Add content: \2022 is the CSS Code/unicode for a bullet */
     color: #444;  /* Change the color */
     display: inline-block;  /* Needed to add space between the bullet and the text */
@@ -106,8 +140,4 @@ ul li::before {
     margin-left: -1em;  /* Also needed for space (tweak if needed) */
     position: relative;
     top: 1px;
-}
-
-a {
-    color: blue;
 }
