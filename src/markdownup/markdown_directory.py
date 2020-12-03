@@ -40,6 +40,9 @@ class MarkdownDirectory:
                     self.directory_map[name] = sub_directory
                     self.directories.append(sub_directory)
 
+        self.directories.sort(key=lambda directory: directory.index.title if directory.index else directory.name)
+        self.files.sort(key=lambda file: file.title)
+
         print(f'Processed {path}')
 
     def resolve(self, path: Path):
