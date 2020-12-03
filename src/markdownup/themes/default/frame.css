@@ -96,7 +96,6 @@ ol {
 ul {
     list-style: none; /* Remove default bullets */
     padding-left: 12px;
-    overflow: hidden; /* Specifically for the .menu li's, but not causing any trouble here */
 }
 
 li {
@@ -106,14 +105,19 @@ li {
 .menu li > input {
     appearance: none;
     -webkit-appearance: none;
+    outline: none;
     width: 0;
     height: 0;
     border-top: 8px solid transparent;
     border-bottom: 8px solid transparent;
-    border-left: 8px solid #444;
+    border-left: 8px solid #888;
     cursor: pointer;
     vertical-align: middle;
     transition: transform .2s;
+}
+
+.menu li > input:focus, .menu li > input:active {
+    border-left: 8px solid #000;
 }
 
 .menu li > input:checked {
@@ -121,11 +125,12 @@ li {
 }
 
 .menu li > input:not(:checked) ~ ul {
-    max-height: 0px;
+    display: none;
 }
 
 .menu label {
     cursor: pointer;
+    text-decoration: underline;
 }
 
 .menu a:only-child {
