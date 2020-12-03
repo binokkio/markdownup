@@ -1,3 +1,4 @@
+from uuid import uuid4
 from pathlib import Path
 from typing import List
 
@@ -13,11 +14,13 @@ class MarkdownDirectory:
         self.path = path
         self.name = path.name
         self.depth = depth
+        self.uid = uuid4()
         self.directory_map = {}
         self.file_map = {}
         self.index = None
-        self.directories = MustacheList()
-        self.files = MustacheList()
+        self.directories: List[MarkdownDirectory] = MustacheList()
+        self.files: List[MarkdownFile] = MustacheList()
+        self.traversed = False  # keeps track of having been traversed during the most recent resolve call
 
         for entry in path.iterdir():
             abs_path = '/' / entry.relative_to(context.root_path)
@@ -40,9 +43,11 @@ class MarkdownDirectory:
         print(f'Processed {path}')
 
     def resolve(self, path: Path):
+        self._reset()
         return self._resolve(list(path.parts))
 
     def _resolve(self, parts: List[str]):
+        self.traversed = True
         if len(parts) == 0:
             return self.index
         next_part = parts.pop(0)
@@ -52,6 +57,13 @@ class MarkdownDirectory:
             return self.directory_map[next_part]._resolve(parts)
         else:
             return None
+
+    def _reset(self):
+        if self.traversed:
+            for directory in self.directories:
+                if directory.traversed:
+                    directory._reset()
+        self.traversed = False
 
 
 class MustacheList(list):
