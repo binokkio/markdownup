@@ -16,10 +16,10 @@ default_config = {
         'gits': {}
     },
     'markdown': {
-        'extensions': [
-            'extra',
-            'codehilite'
-        ]
+        'extensions': {
+            'extra': {},
+            'codehilite': {}
+        }
     },
     'access': {
         r'.*/\.': False,  # nobody has access to hidden files and directories

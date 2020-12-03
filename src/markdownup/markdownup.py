@@ -63,7 +63,11 @@ class MarkdownUp:
                 data={
                     'title': markdown_file.title,
                     'file': markdown_file,
-                    'content': markdown.markdown(source, extensions=self.config['markdown']['extensions']),
+                    'content': markdown.markdown(
+                        source,
+                        extensions=self.config['markdown']['extensions'].keys(),
+                        extension_configs=self.config['markdown']['extensions']
+                    ),
                     'root': self.root
                 }
             )
