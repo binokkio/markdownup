@@ -1,4 +1,5 @@
 import mimetypes
+import os
 from os.path import normpath
 from pathlib import Path
 
@@ -51,6 +52,9 @@ class MarkdownUp:
                 return Response('403 Forbidden')
 
             source = markdown_file.read()
+
+            # relying on the fact that not process handles multiple requests at the same time, we can safely change wd
+            os.chdir(markdown_file.path.parent)
 
             html = chevron.render(
                 template=self.theme.frame,
