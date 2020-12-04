@@ -9,7 +9,7 @@ class AccessControl:
     def __init__(self, config):
         self.rules: OrderedDict[Pattern, any] = OrderedDict((
             (re.compile(pattern), audience)
-            for pattern, audience in config['access'].items()))
+            for pattern, audience in config.get('access').items()))
 
     def is_access_allowed(self, path: Path):
         audience = self.get_audience(path)

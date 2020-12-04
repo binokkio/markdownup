@@ -28,7 +28,7 @@ class MarkdownDirectory:
                 continue
             name = entry.name
             if entry.is_file() and name.endswith('.md'):
-                if name in context.config['content']['indices'] and not self.index:
+                if name in context.config.get('content', 'indices') and not self.index:
                     self.index = MarkdownFile(context.config, entry, depth, is_index=True)
                 else:
                     markdown_file = MarkdownFile(context.config, entry, depth)

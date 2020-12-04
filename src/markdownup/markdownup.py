@@ -6,16 +6,17 @@ from pathlib import Path
 import chevron
 import markdown
 from markdownup.access_control import AccessControl
+from markdownup.config import Config
 from markdownup.markdown_directory import MarkdownDirectory
 from markdownup.theme import Theme
 
 
 class MarkdownUp:
 
-    def __init__(self, config):
+    def __init__(self, config: Config):
         self.config = config
         self.access_control = AccessControl(config)
-        self.root_path = Path(config['content']['root']).resolve()
+        self.root_path = Path(config.get('content', 'root')).resolve()
         self.root = MarkdownDirectory(self)
         self.theme = Theme(config)
 
@@ -65,8 +66,8 @@ class MarkdownUp:
                     'file': markdown_file,
                     'content': markdown.markdown(
                         source,
-                        extensions=self.config['markdown']['extensions'].keys(),
-                        extension_configs=self.config['markdown']['extensions']
+                        extensions=self.config.get('markdown', 'extensions').keys(),
+                        extension_configs=self.config.get('markdown', 'extensions')
                     ),
                     'root': self.root
                 }

@@ -4,7 +4,7 @@ from pathlib import Path
 class Theme:
 
     def __init__(self, config):
-        self.path = self._resolve_path(config['main']['theme'])
+        self.path = self._resolve_path(config.get('main', 'theme'))
         self.frame = self._read_frame()
         self.partials = self._read_partials()
 
