@@ -106,3 +106,17 @@ def test_get_theme_asset():
 
     assert response.status == '200 OK'
     assert next(response.body).decode('UTF-8') == 'p { color: #111; }'
+
+
+def test_get_hidden_file_with_proper_config():
+
+    markdownup = MarkdownUp(Config.from_dict({
+        'main': {'theme': 'bare'},
+        'content': {'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root')},
+        'access': {r'.*': True}
+    }))
+
+    response = markdownup.get('/.hidden.md')
+
+    assert response.status == '200 OK'
+    assert next(response.body).decode('UTF-8') == '<p>This file must not be served with the default configuration.</p>'
