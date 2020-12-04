@@ -1,12 +1,11 @@
-from typing import Dict
-
 from gunicorn.app.base import BaseApplication
+from markdownup.config import Config
 from markdownup.markdownup import MarkdownUp
 
 
 class WsgiApplication(BaseApplication):
 
-    def __init__(self, config: Dict):
+    def __init__(self, config: Config):
         self.config = config
         super().__init__()
 
@@ -14,7 +13,7 @@ class WsgiApplication(BaseApplication):
         pass
 
     def load_config(self):
-        for key, value in self.config['wsgi'].items():
+        for key, value in self.config.get('wsgi').items():
             self.cfg.set(key, value)
 
     def load(self):

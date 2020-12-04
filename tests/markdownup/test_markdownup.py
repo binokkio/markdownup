@@ -1,12 +1,12 @@
 from pathlib import Path
 
-from markdownup.config import extend_default_config
+from markdownup.config import Config
 from markdownup.markdownup import MarkdownUp
 
 
 def test_get():
 
-    markdownup = MarkdownUp(extend_default_config({
+    markdownup = MarkdownUp(Config.from_dict({
         'main': {'theme': 'bare'},
         'content': {
             'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root'),
@@ -22,7 +22,7 @@ def test_get():
 
 def test_prevent_access_outside_root():
 
-    markdownup = MarkdownUp(extend_default_config({
+    markdownup = MarkdownUp(Config.from_dict({
         'content': {'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root' / 'subdir')}
     }))
 
@@ -34,7 +34,7 @@ def test_prevent_access_outside_root():
 
 def test_with_fs_theme():
 
-    markdownup = MarkdownUp(extend_default_config({
+    markdownup = MarkdownUp(Config.from_dict({
         'main': {'theme': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'test_theme')},
         'content': {
             'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root'),
@@ -50,7 +50,7 @@ def test_with_fs_theme():
 
 def test_serve_non_markdown_file():
 
-    markdownup = MarkdownUp(extend_default_config({
+    markdownup = MarkdownUp(Config.from_dict({
         'content': {'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root')}
     }))
 
@@ -62,7 +62,7 @@ def test_serve_non_markdown_file():
 
 def test_title_not_on_first_line():
 
-    markdownup = MarkdownUp(extend_default_config({
+    markdownup = MarkdownUp(Config.from_dict({
         'main': {'theme': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'test_theme')},
         'content': {'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root')}
     }))
@@ -75,7 +75,7 @@ def test_title_not_on_first_line():
 
 def test_hidden_directory_request_yields_403():
 
-    markdownup = MarkdownUp(extend_default_config({
+    markdownup = MarkdownUp(Config.from_dict({
         'content': {'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root')}
     }))
 
@@ -86,7 +86,7 @@ def test_hidden_directory_request_yields_403():
 
 def test_hidden_file_request_yields_403():
 
-    markdownup = MarkdownUp(extend_default_config({
+    markdownup = MarkdownUp(Config.from_dict({
         'content': {'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root')}
     }))
 
@@ -97,7 +97,7 @@ def test_hidden_file_request_yields_403():
 
 def test_get_theme_asset():
 
-    markdownup = MarkdownUp(extend_default_config({
+    markdownup = MarkdownUp(Config.from_dict({
         'main': {'theme': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'test_theme')},
         'content': {'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root')}
     }))
