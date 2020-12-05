@@ -63,7 +63,7 @@ class MarkdownFile(Entry, File):
         arg = self.path.name
 
         # update cwd and arg if we match a configured external .git
-        root = Path(self.config.get('content', 'root')).resolve()  # TODO reuse the one from MarkdownUp
+        root = self.context.root_path
         relative = self.path.relative_to(root)
         for root_path, git_path in self.config.get('content', 'gits').items():
             try:
