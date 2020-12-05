@@ -4,7 +4,7 @@ import sys
 from pathlib import Path
 
 import yaml
-from markdownup.config import extend_default_config
+from markdownup.config import Config, default_config
 from markdownup.wsgi_application import WsgiApplication
 
 
@@ -13,20 +13,18 @@ def _main():
     if len(sys.argv) == 2:
         as_path = Path(sys.argv[1])
         if as_path.is_dir():
-            config = extend_default_config({'content': {'root': sys.argv[1]}})
+            config = Config.from_dict({'content': {'root': sys.argv[1]}})
             WsgiApplication(config).run()
             exit(0)
         elif as_path.is_file():
-            config = yaml.load(as_path.read_text(), yaml.FullLoader)
-            config = extend_default_config(config)
             os.chdir(as_path.parent)  # pretend to run from the config's parent dir
+            config = Config.from_file(as_path)
             WsgiApplication(config).run()
             exit(0)
 
     if len(sys.argv) > 2:
         if sys.argv[1] == '--start-config':
-            config = extend_default_config({'content': {'root': '.'}})
-            config = yaml.dump(config)
+            config = yaml.dump(default_config)
             with open(sys.argv[2], 'w') as file:
                 file.write(config)
             exit(0)
