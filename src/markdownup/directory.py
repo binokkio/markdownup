@@ -1,8 +1,9 @@
 from uuid import uuid4
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 from markdownup.file.asset_file import AssetFile
+from markdownup.file.file import File
 from markdownup.file.markdown_file import MarkdownFile
 
 
@@ -48,7 +49,7 @@ class Directory:
 
         print(f'Processed {path}')
 
-    def resolve(self, path: Path):
+    def resolve(self, path: Path) -> Optional[File]:
         abs_path = '/' / path
         if self.context.global_access_control.get_audience(abs_path) is False:
             print(f'Access denied through global rules for {abs_path}')
@@ -56,7 +57,7 @@ class Directory:
         self._reset()
         return self._resolve(list(path.parts))
 
-    def _resolve(self, parts: List[str]):
+    def _resolve(self, parts: List[str]) -> Optional[File]:
         self.traversed = True
         if len(parts) == 0:
             return self.index

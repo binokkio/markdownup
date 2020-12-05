@@ -5,10 +5,11 @@ from pathlib import Path
 
 import chevron
 import markdown
+from markdownup.file.file import File
 from markdownup.response import Response
 
 
-class MarkdownFile:
+class MarkdownFile(File):
 
     _title_pattern = re.compile(r'^#\s?(.*)', re.MULTILINE)
 
