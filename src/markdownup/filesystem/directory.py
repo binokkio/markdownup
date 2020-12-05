@@ -14,9 +14,8 @@ class Directory(Entry):
         super().__init__(context, path, depth)
 
         self.index: Optional[MarkdownFile] = None
-
-        directory_map = {}
-        file_map = {}
+        self.directory_map: Dict[str, Directory] = {}
+        self.file_map: Dict[str, MarkdownFile] = {}
 
         for entry in self.path.iterdir():
             abs_path = '/' / entry.relative_to(context.root_path)
@@ -29,27 +28,14 @@ class Directory(Entry):
                     self.name = self.index.name
                     self.request_path = self.index.request_path
                 else:
-                    file_map[name] = MarkdownFile(context, entry, depth)
+                    self.file_map[name] = MarkdownFile(context, entry, depth)
             elif entry.is_dir():
                 sub_directory = Directory(context, entry, depth + 1)
                 if sub_directory.directory_map or sub_directory.file_map or sub_directory.index:
-                    directory_map[name] = sub_directory
-
-        # sort directory_map
-        self.directory_map: Dict[str, Directory] = {k: v for k, v in sorted(
-            directory_map.items(),
-            key=lambda d: d[1].index.name if d[1].index else d[1].name
-        )}
-
-        # sort file_map
-        self.file_map: Dict[str, MarkdownFile] = {k: v for k, v in sorted(
-            file_map.items(),
-            key=lambda f: f[1].name
-        )}
+                    self.directory_map[name] = sub_directory
 
         # these are updated for every request
         self.children = ChrevronList()
-        self.has_children = False
         self.traversed = False  # keeps track of having been traversed during the most recent resolve call
 
     def resolve(self, path: Path) -> Optional[File]:
