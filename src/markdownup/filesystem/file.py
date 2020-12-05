@@ -6,5 +6,5 @@ from markdownup.response import Response
 class File(ABC):
 
     @abstractmethod
-    def get_response(self) -> Response:
+    def get_response(self, environ) -> Response:
         raise NotImplemented

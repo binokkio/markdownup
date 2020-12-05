@@ -3,8 +3,8 @@ from pathlib import Path
 
 from markdownup.access_control import AccessControl
 from markdownup.config import Config
-from markdownup.directory import Directory
-from markdownup.file.asset_file import AssetFile
+from markdownup.filesystem.asset_file import AssetFile
+from markdownup.filesystem.directory import Directory
 from markdownup.response import Response
 from markdownup.theme import Theme
 
@@ -46,12 +46,12 @@ class MarkdownUp:
         # serve markdown
         file = self.root.resolve(rel_path)
         if file:
-            return file.get_response()
+            return file.get_response(environ)
 
         # serve theme file
         theme_file = self.theme.path / rel_path
         if theme_file.is_file():
-            return AssetFile(theme_file).get_response()
+            return AssetFile(theme_file).get_response(environ)
 
         # serve 404
         return Response('404 Not Found')
