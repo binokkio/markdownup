@@ -6,10 +6,10 @@ from typing import Pattern
 
 class AccessControl:
 
-    def __init__(self, config):
+    def __init__(self, rules):
         self.rules: OrderedDict[Pattern, any] = OrderedDict((
             (re.compile(pattern), audience)
-            for pattern, audience in config.get('access').items()))
+            for pattern, audience in rules.items()))
 
     def is_access_allowed(self, path: Path):
         audience = self.get_audience(path)

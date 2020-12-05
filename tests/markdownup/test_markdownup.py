@@ -113,7 +113,7 @@ def test_get_hidden_file_with_proper_config():
     markdownup = MarkdownUp(Config.from_dict({
         'main': {'theme': 'bare'},
         'content': {'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root')},
-        'access': {r'.*': True}
+        'access': {'global': {r'.*': True}}
     }))
 
     response = markdownup.get('/.hidden.md')

@@ -24,7 +24,7 @@ class MarkdownDirectory:
 
         for entry in path.iterdir():
             abs_path = '/' / entry.relative_to(context.root_path)
-            if context.access_control.get_audience(abs_path) is False:
+            if context.global_access_control.get_audience(abs_path) is False:
                 continue
             name = entry.name
             if entry.is_file() and name.endswith('.md'):

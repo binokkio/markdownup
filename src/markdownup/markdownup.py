@@ -15,7 +15,7 @@ class MarkdownUp:
 
     def __init__(self, config: Config):
         self.config = config
-        self.access_control = AccessControl(config)
+        self.global_access_control = AccessControl(config.get('access', 'global'))
         self.root_path = Path(config.get('content', 'root')).resolve()
         self.root = MarkdownDirectory(self)
         self.theme = Theme(config)
@@ -49,7 +49,7 @@ class MarkdownUp:
         markdown_file = self.root.resolve(rel_path)
         if markdown_file:
 
-            if not self.access_control.is_access_allowed(abs_path):  # TODO use environ for more advanced access control
+            if not self.global_access_control.is_access_allowed(abs_path):
                 return Response('403 Forbidden')
 
             source = markdown_file.read()
@@ -82,7 +82,7 @@ class MarkdownUp:
         # serve asset file
         asset_file = self.root_path / rel_path
         if asset_file.is_file():
-            if not self.access_control.is_access_allowed(abs_path):  # TODO use environ for more advanced access control
+            if not self.global_access_control.is_access_allowed(abs_path):
                 return Response('403 Forbidden')
             else:
                 return self.serve_file(asset_file)
