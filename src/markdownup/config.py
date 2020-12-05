@@ -26,7 +26,7 @@ default_config = {
         }
     },
     'access': {
-        'accessFileName': '.mduaccess.yml',
+        'accessFileName': '.upaccess.yml',
         'global': {
             r'.*/\.': False,  # nobody has access to hidden files and directories
             r'.*': True  # everybody has access to everything else
