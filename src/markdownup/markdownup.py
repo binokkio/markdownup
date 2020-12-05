@@ -7,7 +7,7 @@ import chevron
 import markdown
 from markdownup.access_control import AccessControl
 from markdownup.config import Config
-from markdownup.markdown_directory import MarkdownDirectory
+from markdownup.directory import Directory
 from markdownup.theme import Theme
 
 
@@ -17,7 +17,7 @@ class MarkdownUp:
         self.config = config
         self.global_access_control = AccessControl(config.get('access', 'global'))
         self.root_path = Path(config.get('content', 'root')).resolve()
-        self.root = MarkdownDirectory(self)
+        self.root = Directory(self)
         self.theme = Theme(config)
 
     def wsgi_app(self, environ, start_response):

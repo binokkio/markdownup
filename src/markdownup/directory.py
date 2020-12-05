@@ -5,7 +5,7 @@ from typing import List
 from markdownup.markdown_file import MarkdownFile
 
 
-class MarkdownDirectory:
+class Directory:
 
     def __init__(self, context, path: Path = None, depth: int = 0):
 
@@ -18,7 +18,7 @@ class MarkdownDirectory:
         self.directory_map = {}
         self.file_map = {}
         self.index = None
-        self.directories: List[MarkdownDirectory] = MustacheList()
+        self.directories: List[Directory] = MustacheList()
         self.files: List[MarkdownFile] = MustacheList()
         self.traversed = False  # keeps track of having been traversed during the most recent resolve call
 
@@ -35,7 +35,7 @@ class MarkdownDirectory:
                     self.file_map[name] = markdown_file
                     self.files.append(markdown_file)
             elif entry.is_dir():
-                sub_directory = MarkdownDirectory(context, entry, depth + 1)
+                sub_directory = Directory(context, entry, depth + 1)
                 if sub_directory.directories or sub_directory.files or sub_directory.index:
                     self.directory_map[name] = sub_directory
                     self.directories.append(sub_directory)
