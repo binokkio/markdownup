@@ -1,15 +1,21 @@
+import os
 import re
 import subprocess
 from pathlib import Path
+
+import chevron
+import markdown
+from markdownup.response import Response
 
 
 class MarkdownFile:
 
     _title_pattern = re.compile(r'^#\s?(.*)', re.MULTILINE)
 
-    def __init__(self, config, path: Path, depth: int, is_index: bool = False):
+    def __init__(self, context, path: Path, depth: int, is_index: bool = False):
 
-        self.config = config
+        self.context = context
+        self.config = context.config
         self.path = path
         self.name = path.name
         self.depth = depth
@@ -19,8 +25,32 @@ class MarkdownFile:
 
         print(f'Processed {path}')
 
-    def read(self):
-        return self.path.read_text()
+    def get_response(self):
+
+        # relying on the fact that no process handles multiple requests at the same time, we can safely change wd
+        os.chdir(self.path.parent)
+
+        html = chevron.render(
+            template=self.context.theme.frame,
+            partials_path=str(self.context.theme.path),
+            partials_ext='html',
+            data={
+                'title': self.title,
+                'file': self,
+                'content': markdown.markdown(
+                    self.path.read_text(),
+                    extensions=self.config.get('markdown', 'extensions').keys(),
+                    extension_configs=self.config.get('markdown', 'extensions')
+                ),
+                'root': self.context.root
+            }
+        )
+
+        return Response(
+            '200 OK',
+            [('Content-Type', 'text/html')],
+            (bytes(b, 'UTF-8') for b in html.splitlines(keepends=True))
+        )
 
     @staticmethod
     def _get_title(md: str) -> str:

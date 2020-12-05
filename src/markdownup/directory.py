@@ -2,7 +2,8 @@ from uuid import uuid4
 from pathlib import Path
 from typing import List
 
-from markdownup.markdown_file import MarkdownFile
+from markdownup.file.asset_file import AssetFile
+from markdownup.file.markdown_file import MarkdownFile
 
 
 class Directory:
@@ -29,9 +30,9 @@ class Directory:
             name = entry.name
             if entry.is_file() and name.endswith('.md'):
                 if name in context.config.get('content', 'indices') and not self.index:
-                    self.index = MarkdownFile(context.config, entry, depth, is_index=True)
+                    self.index = MarkdownFile(context, entry, depth, is_index=True)
                 else:
-                    markdown_file = MarkdownFile(context.config, entry, depth)
+                    markdown_file = MarkdownFile(context, entry, depth)
                     self.file_map[name] = markdown_file
                     self.files.append(markdown_file)
             elif entry.is_dir():
@@ -59,7 +60,11 @@ class Directory:
         elif next_part in self.directory_map:
             return self.directory_map[next_part]._resolve(parts)
         else:
-            return None
+            # asset_file_path = self.path / next_part
+            # if asset_file_path.is_file():
+            #     return AssetFile(asset_file_path)
+            # else:
+                return None
 
     def _reset(self):
         if self.traversed:

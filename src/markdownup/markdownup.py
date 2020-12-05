@@ -1,13 +1,11 @@
 import mimetypes
-import os
 from os.path import normpath
 from pathlib import Path
 
-import chevron
-import markdown
 from markdownup.access_control import AccessControl
 from markdownup.config import Config
 from markdownup.directory import Directory
+from markdownup.response import Response
 from markdownup.theme import Theme
 
 
@@ -46,38 +44,13 @@ class MarkdownUp:
         rel_path = Path(*abs_path.parts[1:])
 
         # serve markdown
-        markdown_file = self.root.resolve(rel_path)
-        if markdown_file:
+        file = self.root.resolve(rel_path)
+        if file:
 
             if not self.global_access_control.is_access_allowed(abs_path):
                 return Response('403 Forbidden')
 
-            source = markdown_file.read()
-
-            # relying on the fact that not process handles multiple requests at the same time, we can safely change wd
-            os.chdir(markdown_file.path.parent)
-
-            html = chevron.render(
-                template=self.theme.frame,
-                partials_path=str(self.theme.path),
-                partials_ext='html',
-                data={
-                    'title': markdown_file.title,
-                    'file': markdown_file,
-                    'content': markdown.markdown(
-                        source,
-                        extensions=self.config.get('markdown', 'extensions').keys(),
-                        extension_configs=self.config.get('markdown', 'extensions')
-                    ),
-                    'root': self.root
-                }
-            )
-
-            return Response(
-                '200 OK',
-                [('Content-Type', 'text/html')],
-                (bytes(b, 'UTF-8') for b in html.splitlines(keepends=True))
-            )
+            return file.get_response()
 
         # serve asset file
         asset_file = self.root_path / rel_path
@@ -113,10 +86,3 @@ class MarkdownUp:
             [('Content-Type', guessed_mimetype or 'application/octet-stream')],
             reader()
         )
-
-
-class Response:
-    def __init__(self, status: str, headers=None, body=None):
-        self.status = status
-        self.headers = headers or []
-        self.body = body or iter([bytes(status, 'UTF-8')])
