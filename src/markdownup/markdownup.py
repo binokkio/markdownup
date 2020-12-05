@@ -1,10 +1,10 @@
-import mimetypes
 from os.path import normpath
 from pathlib import Path
 
 from markdownup.access_control import AccessControl
 from markdownup.config import Config
 from markdownup.directory import Directory
+from markdownup.file.asset_file import AssetFile
 from markdownup.response import Response
 from markdownup.theme import Theme
 
@@ -46,43 +46,12 @@ class MarkdownUp:
         # serve markdown
         file = self.root.resolve(rel_path)
         if file:
-
-            if not self.global_access_control.is_access_allowed(abs_path):
-                return Response('403 Forbidden')
-
             return file.get_response()
-
-        # serve asset file
-        asset_file = self.root_path / rel_path
-        if asset_file.is_file():
-            if not self.global_access_control.is_access_allowed(abs_path):
-                return Response('403 Forbidden')
-            else:
-                return self.serve_file(asset_file)
 
         # serve theme file
         theme_file = self.theme.path / rel_path
         if theme_file.is_file():
-            return self.serve_file(theme_file)
+            return AssetFile(theme_file).get_response()
 
         # serve 404
         return Response('404 Not Found')
-
-    @staticmethod
-    def serve_file(path: Path):
-
-        guessed_mimetype = mimetypes.guess_type(path.name)[0]
-
-        def reader():
-            with path.open('rb') as f:
-                while True:
-                    data = f.read(1024)
-                    if not data:
-                        break
-                    yield data
-
-        return Response(
-            '200 OK',
-            [('Content-Type', guessed_mimetype or 'application/octet-stream')],
-            reader()
-        )

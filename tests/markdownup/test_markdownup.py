@@ -73,7 +73,9 @@ def test_title_not_on_first_line():
     assert next(response.body).decode('UTF-8') == 'Title goes here: Title\n'
 
 
-def test_hidden_directory_request_yields_403():
+def test_hidden_directory_request_yields_404():
+
+    # 404 because we don't want to expose the fact it exists
 
     markdownup = MarkdownUp(Config.from_dict({
         'content': {'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root')}
@@ -81,10 +83,13 @@ def test_hidden_directory_request_yields_403():
 
     response = markdownup.get('/.hidden/hidden.md')
 
-    assert response.status == '403 Forbidden'
+    assert response.status == '404 Not Found'
+    assert next(response.body).decode('UTF-8') == '404 Not Found'
 
 
-def test_hidden_file_request_yields_403():
+def test_hidden_file_request_yields_404():
+
+    # 404 because we don't want to expose the fact it exists
 
     markdownup = MarkdownUp(Config.from_dict({
         'content': {'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root')}
@@ -92,7 +97,8 @@ def test_hidden_file_request_yields_403():
 
     response = markdownup.get('/.hidden.md')
 
-    assert response.status == '403 Forbidden'
+    assert response.status == '404 Not Found'
+    assert next(response.body).decode('UTF-8') == '404 Not Found'
 
 
 def test_get_theme_asset():

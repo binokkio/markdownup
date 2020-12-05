@@ -12,6 +12,7 @@ class Directory:
 
         path = path or context.root_path
 
+        self.context = context
         self.path = path
         self.name = path.name
         self.depth = depth
@@ -37,6 +38,7 @@ class Directory:
                     self.files.append(markdown_file)
             elif entry.is_dir():
                 sub_directory = Directory(context, entry, depth + 1)
+                # TODO add to map but not list if no markdown inside
                 if sub_directory.directories or sub_directory.files or sub_directory.index:
                     self.directory_map[name] = sub_directory
                     self.directories.append(sub_directory)
@@ -47,6 +49,10 @@ class Directory:
         print(f'Processed {path}')
 
     def resolve(self, path: Path):
+        abs_path = '/' / path
+        if self.context.global_access_control.get_audience(abs_path) is False:
+            print(f'Access denied through global rules for {abs_path}')
+            return None
         self._reset()
         return self._resolve(list(path.parts))
 
@@ -60,10 +66,10 @@ class Directory:
         elif next_part in self.directory_map:
             return self.directory_map[next_part]._resolve(parts)
         else:
-            # asset_file_path = self.path / next_part
-            # if asset_file_path.is_file():
-            #     return AssetFile(asset_file_path)
-            # else:
+            asset_file_path = self.path / next_part
+            if asset_file_path.is_file():
+                return AssetFile(asset_file_path)
+            else:
                 return None
 
     def _reset(self):
