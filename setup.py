@@ -4,7 +4,7 @@ setuptools.setup(
     name='markdownup',
     description='Markdown server',
     keywords=['markdown', 'server'],
-    version='0.0.14',
+    version='0.0.15',
     author='Binokkio',
     author_email='binokkio@b.nana.technology',
     url='https://github.com/binokkio/markdownup',
@@ -17,6 +17,8 @@ setuptools.setup(
         'gunicorn',
         'markdown',
         'pygments',
+        'pyjwt',
+        'python-keycloak',
         'pyyaml'
     ]
 )
