@@ -1,21 +1,22 @@
 <ul>
-    {{#directories}}
+    {{#children}}
         <li>
-            {{#index}}
-                <input type="checkbox" {{#traversed}}checked{{/traversed}} />
-                <a href="{{request_path}}">{{title}}</a>
-            {{/index}}
-            {{^index}}
-                <input id="{{uid}}" type="checkbox" {{#traversed}}checked{{/traversed}} />
-                <label for="{{uid}}">{{name}}</label>
-            {{/index}}
-            {{>menu}}
-        </li>
-    {{/directories}}
 
-    {{#files}}
-        <li>
-            <a href="{{request_path}}">{{title}}</a>
+            {{#has_children}}
+                <input id="{{uid}}" type="checkbox" {{#traversed}}checked{{/traversed}} />
+            {{/has_children}}
+
+            {{#request_path}}
+                <a href="{{request_path}}">{{name}}</a>
+            {{/request_path}}
+            {{^request_path}}
+                <label for="{{uid}}">{{name}}</label>
+            {{/request_path}}
+
+            {{#has_children}}
+                {{>menu}}
+            {{/has_children}}
+
         </li>
-    {{/files}}
+    {{/children}}
 </ul>

@@ -26,8 +26,11 @@ default_config = {
         }
     },
     'access': {
-        r'.*/\.': False,  # nobody has access to hidden files and directories
-        r'.*': True  # everybody has access to everything else
+        'fileName': '.upaccess',
+        'global': {
+            r'.*/\.': False,  # nobody has access to hidden files and directories
+            r'.*': True  # everybody has access to everything else
+        }
     }
 }
 
@@ -49,7 +52,10 @@ class Config:
         try:
             return self._get_from(self.config or default_config, list(args))
         except KeyError:
-            return self._get_from(default_config, list(args))
+            try:
+                return self._get_from(default_config, list(args))
+            except KeyError:
+                return None
 
     def _get_from(self, pointer, args: List[str]):
         pointer = pointer[args.pop(0)]

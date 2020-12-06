@@ -1,26 +1,55 @@
+import os
 import re
 import subprocess
 from pathlib import Path
 
+import chevron
+import markdown
+from markdownup.filesystem.entry import Entry
+from markdownup.filesystem.file import File
+from markdownup.response import Response
 
-class MarkdownFile:
+
+class MarkdownFile(Entry, File):
 
     _title_pattern = re.compile(r'^#\s?(.*)', re.MULTILINE)
 
-    def __init__(self, config, path: Path, depth: int, is_index: bool = False):
+    def __init__(self, context, path: Path, depth: int, is_index: bool = False):
 
-        self.config = config
-        self.path = path
-        self.name = path.name
-        self.depth = depth
-        self.title = self._get_title(path.read_text()) or self.name
+        super().__init__(context, path, depth)
+
+        self.name = self._get_title(path.read_text()) or self.name
         self.request_path = '/' + '/'.join(path.parts[len(path.parts) - depth - 1:-1 if is_index else len(path.parts)])
         self.version = self._get_version_details()
 
-        print(f'Processed {path}')
+    def get_response(self, environ):
 
-    def read(self):
-        return self.path.read_text()
+        # relying on the fact that no process handles multiple requests at the same time, we can safely do this
+        os.chdir(self.path.parent)
+        self.context.root.apply_access(environ)
+
+        html = chevron.render(
+            template=self.context.theme.frame,
+            # partials_dict=self.context.theme.partials,
+            partials_path=str(self.context.theme.path),
+            partials_ext='html',
+            data={
+                'title': self.name,
+                'file': self,
+                'content': markdown.markdown(
+                    self.path.read_text(),
+                    extensions=self.config.get('markdown', 'extensions').keys(),
+                    extension_configs=self.config.get('markdown', 'extensions')
+                ),
+                'root': self.context.root
+            }
+        )
+
+        return Response(
+            '200 OK',
+            [('Content-Type', 'text/html')],
+            (bytes(b, 'UTF-8') for b in html.splitlines(keepends=True))
+        )
 
     @staticmethod
     def _get_title(md: str) -> str:
@@ -31,10 +60,10 @@ class MarkdownFile:
 
         # define the cwd and arg for the git call assuming .git is not external
         cwd = self.path.parent
-        arg = self.name
+        arg = self.path.name
 
         # update cwd and arg if we match a configured external .git
-        root = Path(self.config.get('content', 'root')).resolve()  # TODO reuse the one from MarkdownUp
+        root = self.context.root_path
         relative = self.path.relative_to(root)
         for root_path, git_path in self.config.get('content', 'gits').items():
             try:
