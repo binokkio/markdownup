@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Set
 
 from markdownup.filesystem.asset_file import AssetFile
 from markdownup.filesystem.entry import Entry
@@ -16,6 +16,7 @@ class Directory(Entry):
         self.index: Optional[MarkdownFile] = None
         self.directory_map: Dict[str, Directory] = {}
         self.file_map: Dict[str, MarkdownFile] = {}
+        self.access_roles: Optional[Set[str]] = self.read_access_file()
 
         for entry in self.path.iterdir():
             abs_path = '/' / entry.relative_to(context.root_path)
@@ -38,15 +39,23 @@ class Directory(Entry):
         self.children = ChrevronList()
         self.traversed = False  # keeps track of having been traversed during the most recent resolve call
 
-    def resolve(self, path: Path) -> Optional[File]:
+    def read_access_file(self) -> Optional[Set[str]]:
+        access_file_path = self.path / self.config.get('access', 'fileName')
+        if access_file_path.is_file():
+            return set(access_file_path.read_text('UTF-8').splitlines())
+        return None
+
+    def resolve(self, environ, path: Path) -> Optional[File]:
         abs_path = '/' / path
         if self.context.global_access_control.get_audience(abs_path) is False:
             print(f'Access denied through global rules for {abs_path}')
             return None
         self._reset()
-        return self._resolve(list(path.parts))
+        return self._resolve(environ, list(path.parts))
 
-    def _resolve(self, parts: List[str]) -> Optional[File]:
+    def _resolve(self, environ, parts: List[str]) -> Optional[File]:
+        if not self.is_accessible(environ):
+            return None
         self.traversed = True
         if len(parts) == 0:
             return self.index
@@ -54,7 +63,7 @@ class Directory(Entry):
         if next_part in self.file_map:
             return self.file_map[next_part]
         elif next_part in self.directory_map:
-            return self.directory_map[next_part]._resolve(parts)
+            return self.directory_map[next_part]._resolve(environ, parts)
         else:
             asset_file_path = self.path / next_part
             if asset_file_path.is_file():
@@ -84,7 +93,14 @@ class Directory(Entry):
         self.has_children = len(self.children) > 0
 
     def is_accessible(self, environ):
-        return True
+        if not self.access_roles:
+            return True  # no access rules defined, access allowed
+        if 'roles' not in environ:
+            return False  # access rules defined but user has no roles, access denied
+        if self.access_roles & environ['roles']:
+            return True  # overlap between access roles and user roles, access allowed
+        else:
+            return False  # no intersect between access roles and user roles, access denied
 
 
 class ChrevronList(list):

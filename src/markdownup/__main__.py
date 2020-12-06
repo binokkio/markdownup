@@ -1,9 +1,11 @@
 import os
 import shutil
 import sys
+from multiprocessing.context import Process
 from pathlib import Path
 
 import yaml
+from markdownup.cache_application import CacheApplication
 from markdownup.config import Config, default_config
 from markdownup.wsgi_application import WsgiApplication
 
@@ -11,15 +13,25 @@ from markdownup.wsgi_application import WsgiApplication
 def _main():
 
     if len(sys.argv) == 2:
+
+        # initialize config based on argv
+        config = None
         as_path = Path(sys.argv[1])
         if as_path.is_dir():
             config = Config.from_dict({'content': {'root': sys.argv[1]}})
-            WsgiApplication(config).run()
-            exit(0)
         elif as_path.is_file():
             os.chdir(as_path.parent)  # pretend to run from the config's parent dir
             config = Config.from_file(as_path)
+
+        if config:
+
+            # launch a new process for the built in cache server which is a bit crude but suffices for now
+            Process(target=CacheApplication(config).run).start()
+
+            # launch the main MarkdownUp WSGI application
             WsgiApplication(config).run()
+
+            # if the above returns we exit normally
             exit(0)
 
     if len(sys.argv) > 2:
