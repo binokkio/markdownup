@@ -53,17 +53,15 @@ class Keycloak(AuthProvider):
             )
             cache_value = token['access_token']
             requests.put(self.cache_url + cache_key, cache_value)
-            # TODO redirect to get rid of Keycloak query params
+
+            # set cookie and redirect to self (removes the keycloak query parameters)
+            return self._get_redirect_response(redirect_url, session_id)
         else:
             cache_value = self.get_cached_value(cache_key)
 
         if not cache_value:  # TODO or expired
             # set cookie and redirect to auth url
-            return Response(
-                '302 Found', [
-                    ('Set-Cookie', f'session={session_id}'),
-                    ('Location', self.keycloak.auth_url(redirect_url))
-                ], iter([]))
+            return self._get_redirect_response(self.keycloak.auth_url(redirect_url), session_id)
 
         decoded = jwt.decode(cache_value, verify=False)
         environ['roles'] = set(decoded['realm_access']['roles'])
@@ -78,3 +76,10 @@ class Keycloak(AuthProvider):
             return None
         else:
             return response.text
+
+    def _get_redirect_response(self, location, session_id):
+        return Response(
+            '302 Found', [
+                ('Set-Cookie', f'session={session_id}'),
+                ('Location', location)
+            ], iter([]))
