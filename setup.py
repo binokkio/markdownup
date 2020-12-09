@@ -9,7 +9,7 @@ setuptools.setup(
     author_email='binokkio@b.nana.technology',
     url='https://github.com/binokkio/markdownup',
     license='LGPLv3+',
-    packages=['markdownup'],
+    packages=setuptools.find_packages('src'),
     package_dir={'': 'src'},
     include_package_data=True,
     install_requires=[
