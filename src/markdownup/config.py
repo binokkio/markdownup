@@ -13,6 +13,10 @@ default_config = {
     },
     'content': {
         'root': '.',
+        'exclusions': [
+            r'.*/\.'  # exclude hidden files and directories by default
+        ],
+        'accessFilename': '.upaccess',
         'indices': [
             'README.md',
             'index.md'
@@ -23,13 +27,6 @@ default_config = {
         'extensions': {
             'extra': {},
             'codehilite': {}
-        }
-    },
-    'access': {
-        'fileName': '.upaccess',
-        'global': {
-            r'.*/\.': False,  # nobody has access to hidden files and directories
-            r'.*': True  # everybody has access to everything else
         }
     }
 }

@@ -19,8 +19,8 @@ class Directory(Entry):
         self.access_roles: Optional[Set[str]] = self.read_access_file()
 
         for entry in self.path.iterdir():
-            abs_path = '/' / entry.relative_to(context.root_path)
-            if context.global_access_control.get_audience(abs_path) is False:
+            str_path = str('/' / entry.relative_to(context.root_path))
+            if any(map(lambda exclusion: exclusion.search(str_path), self.context.exclusions)):
                 continue
             name = entry.name
             if entry.is_file() and name.endswith('.md'):
@@ -40,15 +40,15 @@ class Directory(Entry):
         self.traversed = False  # keeps track of having been traversed during the most recent resolve call
 
     def read_access_file(self) -> Optional[Set[str]]:
-        access_file_path = self.path / self.config.get('access', 'fileName')
+        access_file_path = self.path / self.config.get('content', 'accessFilename')
         if access_file_path.is_file():
             return set(access_file_path.read_text('UTF-8').splitlines())
         return None
 
     def resolve(self, environ, path: Path) -> Optional[File]:
-        abs_path = '/' / path
-        if self.context.global_access_control.get_audience(abs_path) is False:
-            print(f'Access denied through global rules for {abs_path}')
+        str_path = str('/' / path)
+        if any(map(lambda exclusion: exclusion.search(str_path), self.context.exclusions)):
+            print(f'Access denied through global rules for {str_path}')
             return None
         self._reset()
         return self._resolve(environ, list(path.parts))
