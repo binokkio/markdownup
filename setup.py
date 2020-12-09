@@ -18,7 +18,7 @@ setuptools.setup(
         'markdown',
         'pygments',
         'pyjwt',
-        'python-keycloak',
-        'pyyaml'
+        'pyyaml',
+        'yarl'
     ]
 )
