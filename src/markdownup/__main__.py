@@ -5,7 +5,7 @@ from multiprocessing.context import Process
 from pathlib import Path
 
 import yaml
-from markdownup.cache_application import CacheApplication
+from markdownup.cache.builtin.cache_application import CacheApplication
 from markdownup.config import Config, default_config
 from markdownup.wsgi_application import WsgiApplication
 
@@ -25,8 +25,9 @@ def _main():
 
         if config:
 
-            # launch a new process for the built in cache server which is a bit crude but suffices for now
-            Process(target=CacheApplication(config).run).start()
+            # launch a new process for the built in cache server, a bit crude but suffices for now
+            if config.get('cache', 'type') == 'builtin':
+                Process(target=CacheApplication(config).run).start()
 
             # launch the main MarkdownUp WSGI application
             WsgiApplication(config).run()

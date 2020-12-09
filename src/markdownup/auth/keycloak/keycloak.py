@@ -8,18 +8,17 @@ import requests
 from yarl import URL
 
 from markdownup.auth.auth_provider import AuthProvider
-from markdownup.cache_application import CacheApplication
-from markdownup.config import Config
+from markdownup.markdownup import MarkdownUp
 from markdownup.response import Response
 
 
 class Keycloak(AuthProvider):
 
-    def __init__(self, config: Config):
+    def __init__(self, context: MarkdownUp):
 
-        self.config = config
-        self.auth_config = config.get('access', 'auth')
-        self.cache_url = f'http://{CacheApplication.get_bind(config)}/'  # TODO move to a nice class
+        self.cache = context.cache
+        self.config = context.config
+        self.auth_config = context.config.get('access', 'auth')
 
         base_url = \
             URL(self.auth_config['auth_url']) / \
@@ -42,7 +41,7 @@ class Keycloak(AuthProvider):
         if not session_id:
             while True:
                 session_id = str(uuid4())
-                if not self.get_cached_value('session/' + session_id):
+                if not self.cache.get('session/' + session_id):
                     break
         cache_key = 'session/' + session_id
 
@@ -65,12 +64,12 @@ class Keycloak(AuthProvider):
 
             response.raise_for_status()
             cache_value = response.json()['access_token']
-            requests.put(self.cache_url + cache_key, cache_value)
+            self.cache.put(cache_key, cache_value)
 
             # set cookie and redirect to self (removes the keycloak query parameters)
             return self._get_redirect_response(redirect_url, session_id)
         else:
-            cache_value = self.get_cached_value(cache_key)
+            cache_value = self.cache.get(cache_key)
 
         if not cache_value:  # TODO or expired
             # set cookie and redirect to auth url
@@ -83,13 +82,6 @@ class Keycloak(AuthProvider):
 
     def handle_response(self, environ, response) -> Response:
         return response
-
-    def get_cached_value(self, path):
-        response = requests.get(self.cache_url + path)
-        if response.status_code == 404:
-            return None
-        else:
-            return response.text
 
     def _get_redirect_response(self, location: URL, session_id):
         return Response(

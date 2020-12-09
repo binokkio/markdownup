@@ -11,6 +11,10 @@ default_config = {
         'bind': '127.0.0.1:8080',
         'workers': 1
     },
+    'cache': {
+        'type': 'builtin',
+        'bind': '127.0.0.1:8081'
+    },
     'content': {
         'root': '.',
         'exclusions': [

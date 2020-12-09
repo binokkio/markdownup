@@ -1,13 +1,11 @@
-import re
 from typing import Dict
 
 from gunicorn.app.base import BaseApplication
+
 from markdownup.config import Config
 
 
 class CacheApplication(BaseApplication):
-
-    _bind_pattern = re.compile(r'(.*):(\d+)')
 
     def __init__(self, config: Config):
         self.config = config
@@ -18,18 +16,8 @@ class CacheApplication(BaseApplication):
         pass
 
     def load_config(self):
-        self.cfg.set('bind', self.get_bind(self.config))
+        self.cfg.set('bind', self.config.get('cache', 'bind'))
         self.cfg.set('workers', 1)
-
-    @staticmethod
-    def get_bind(config: Config):
-        bind = config.get('cache', 'bind')
-        if not bind:  # default to binding 1 port above the wsgi bind
-            match = CacheApplication._bind_pattern.match(config.get('wsgi', 'bind'))
-            host = match.group(1)
-            port = int(match.group(2))
-            bind = f'{host}:{port + 1}'
-        return bind
 
     def load(self):
         return self.wsgi_app
