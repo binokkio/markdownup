@@ -52,7 +52,7 @@ class Keycloak(AuthProvider):
         query = parse_qs(environ['QUERY_STRING'])
         if 'code' in query:
 
-            response = requests.post(
+            token_response = requests.post(
                 self.token_url,
                 data={
                     'client_id': self.auth_config['client_id'],
@@ -61,27 +61,25 @@ class Keycloak(AuthProvider):
                     'redirect_uri': redirect_url
                 }
             )
+            token_response.raise_for_status()
 
-            response.raise_for_status()
-            cache_value = response.json()['access_token']
-            self.cache.put(cache_key, cache_value)
+            access_token = token_response.json()['access_token']
+            self.cache.put(cache_key, access_token)
 
             # set cookie and redirect to self (removes the keycloak query parameters)
             return self._get_redirect_response(redirect_url, session_id)
         else:
-            cache_value = self.cache.get(cache_key)
+            access_token = self.cache.get(cache_key)
 
-        if not cache_value:  # TODO or expired
+        if not access_token:  # TODO or expired
             # set cookie and redirect to auth url
             location = self.auth_url % {'redirect_uri': redirect_url}
             return self._get_redirect_response(location, session_id)
 
-        decoded = jwt.decode(cache_value, verify=False)
-        environ['roles'] = set(decoded['realm_access']['roles'])
-        return None
+        access_token = jwt.decode(access_token, verify=False)
+        environ['roles'] = set(access_token['realm_access']['roles'])
 
-    def handle_response(self, environ, response) -> Response:
-        return response
+        return None
 
     def _get_redirect_response(self, location: URL, session_id):
         return Response(

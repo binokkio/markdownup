@@ -10,7 +10,7 @@ from markdownup.markdownup import MarkdownUp
 class BuiltinCache(Cache):
 
     def __init__(self, context: MarkdownUp):
-        self.cache_url = URL(context.config.get('cache', 'bind'))
+        self.cache_url = URL('http://' + context.config.get('cache', 'bind'))
 
     def get(self, key: str) -> Optional[bytes]:
         url = str(self.cache_url / key)

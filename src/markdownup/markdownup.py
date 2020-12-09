@@ -43,9 +43,6 @@ class MarkdownUp:
 
         response = self.get(environ['PATH_INFO'] or '/', environ)
 
-        if self.auth_provider:
-            response = self.auth_provider.handle_response(environ, response)
-
         return response
 
     def get(self, path: str, environ=None) -> 'Response':

@@ -14,7 +14,7 @@ class AuthProvider(ABC):
             if auth_type is None:
                 raise ValueError('Config auth section found but type key is missing')
             elif auth_type == 'keycloak':
-                from markdownup.auth.keycloak import Keycloak
+                from markdownup.auth.keycloak.keycloak import Keycloak
                 return Keycloak(context)
             else:
                 raise ValueError('Unknown auth type: ' + auth_type)
@@ -23,6 +23,3 @@ class AuthProvider(ABC):
 
     def handle_request(self, environ) -> Optional[Response]:
         return None
-
-    def handle_response(self, environ, response) -> Response:
-        return response
