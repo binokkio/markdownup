@@ -1,7 +1,8 @@
 from pathlib import Path
-from typing import List
 
 import yaml
+
+from markdownup.helpers import rget
 
 default_config = {
     'main': {
@@ -51,16 +52,9 @@ class Config:
 
     def get(self, *args):
         try:
-            return self._get_from(self.config or default_config, list(args))
+            return rget(self.config or default_config, *args)
         except KeyError:
             try:
-                return self._get_from(default_config, list(args))
+                return rget(default_config, *args)
             except KeyError:
                 return None
-
-    def _get_from(self, pointer, args: List[str]):
-        pointer = pointer[args.pop(0)]
-        if len(args):
-            return self._get_from(pointer, args)
-        else:
-            return pointer

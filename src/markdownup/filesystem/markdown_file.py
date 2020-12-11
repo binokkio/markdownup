@@ -30,9 +30,9 @@ class MarkdownFile(Entry, File):
 
         html = chevron.render(
             template=self.context.theme.frame,
-            # partials_dict=self.context.theme.partials,
-            partials_path=str(self.context.theme.path),
-            partials_ext='html',
+            partials_dict=self.context.theme.partials,
+            # partials_path=str(self.context.theme.path),
+            # partials_ext='html',
             data={
                 'title': self.name,
                 'file': self,
@@ -41,7 +41,8 @@ class MarkdownFile(Entry, File):
                     extensions=self.config.get('markdown', 'extensions').keys(),
                     extension_configs=self.config.get('markdown', 'extensions')
                 ),
-                'root': self.context.root
+                'root': self.context.root,
+                'auth': environ.get('auth', None)
             }
         )
 
