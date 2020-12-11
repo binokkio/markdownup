@@ -26,5 +26,6 @@ class Theme:
     def _read_partials(self):
         result = {}
         for partial in self.path.glob('*.html'):
-            result[partial.name[:-5]] = partial.read_text()
+            if partial.name != 'frame.html':
+                result[partial.name[:-5]] = partial.read_text()
         return result

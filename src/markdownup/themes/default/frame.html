@@ -14,11 +14,16 @@
 
     <body>
         {{#root}}
-            {{#index}}
-                <div class="header">
-                    <a href="{{request_path}}">{{title}}</a>
-                </div>
-            {{/index}}
+            <div class="header">
+                {{#index}}
+                    <a class="title" href="{{request_path}}">{{title}}</a>
+                {{/index}}
+                {{#auth}}
+                    {{#display_name}}
+                        <span class="auth_display_name">{{display_name}}</span>
+                    {{/display_name}}
+                {{/auth}}
+            </div>
 
             <div class="menu">
                 {{>menu}}
