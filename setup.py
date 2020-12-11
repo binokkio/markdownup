@@ -19,7 +19,6 @@ setuptools.setup(
         'pygments',
         'pyjwt',
         'pyyaml',
-        'requests',
-        'yarl'
+        'requests'
     ]
 )

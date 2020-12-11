@@ -1,11 +1,10 @@
 from http.cookies import BaseCookie
 from typing import Optional
-from urllib.parse import parse_qs
+from urllib.parse import parse_qs, urlencode
 from uuid import uuid4
 
 import jwt
 import requests
-from yarl import URL
 
 from markdownup.auth.auth_provider import AuthProvider
 from markdownup.markdownup import MarkdownUp
@@ -18,20 +17,20 @@ class Keycloak(AuthProvider):
 
         self.cache = context.cache
         self.config = context.config
-        self.auth_config = context.config.get('access', 'auth')
+        self.client_id = context.config.get('access', 'auth', 'client_id')
 
         base_url = \
-            URL(self.auth_config['auth_url']) / \
-            'realms' / \
-            self.auth_config['realm'] / \
-            'protocol/openid-connect'
+            self.config.get('access', 'auth', 'auth_url').rstrip('/') + \
+            '/realms/' + \
+            self.config.get('access', 'auth', 'realm') + \
+            '/protocol/openid-connect'
 
-        self.auth_url = base_url / 'auth' % {
-            'client_id': self.auth_config['client_id'],
+        self.auth_url = base_url + '/auth?' + urlencode({
+            'client_id': self.client_id,
             'response_type': 'code'
-        }
+        })
 
-        self.token_url = base_url / 'token'
+        self.token_url = base_url + '/token'
 
     def handle_request(self, environ) -> Optional[Response]:
 
@@ -46,7 +45,7 @@ class Keycloak(AuthProvider):
         cache_key = 'session/' + session_id
 
         # build redirect url
-        redirect_url = self.auth_config['redirect_url'] + (environ['PATH_INFO'] or '/')  # TODO include query params
+        redirect_url = self.config.get('access', 'auth', 'redirect_url') + (environ['PATH_INFO'] or '/')  # TODO include query params
 
         # handle incoming Keycloak redirect
         query = parse_qs(environ['QUERY_STRING'])
@@ -55,7 +54,7 @@ class Keycloak(AuthProvider):
             token_response = requests.post(
                 self.token_url,
                 data={
-                    'client_id': self.auth_config['client_id'],
+                    'client_id': self.client_id,
                     'grant_type': 'authorization_code',
                     'code': query['code'][0],
                     'redirect_uri': redirect_url
@@ -73,7 +72,7 @@ class Keycloak(AuthProvider):
 
         if not access_token:  # TODO or expired
             # set cookie and redirect to auth url
-            location = self.auth_url % {'redirect_uri': redirect_url}
+            location = self.auth_url + '&' + urlencode({'redirect_uri': redirect_url})
             return self._get_redirect_response(location, session_id)
 
         access_token = jwt.decode(access_token, verify=False)
@@ -81,7 +80,8 @@ class Keycloak(AuthProvider):
 
         return None
 
-    def _get_redirect_response(self, location: URL, session_id):
+    @staticmethod
+    def _get_redirect_response(location: str, session_id):
         return Response(
             '302 Found', [
                 ('Set-Cookie', f'session={session_id}'),
