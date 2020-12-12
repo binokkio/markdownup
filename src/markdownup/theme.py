@@ -5,7 +5,8 @@ class Theme:
 
     def __init__(self, config):
         self.path = self._resolve_path(config.get('main', 'theme'))
-        self.frame = self._read_frame()
+        self.document = self._read_document()
+        self.error_404 = self._read_404()
         self.partials = self._read_partials()
 
     @staticmethod
@@ -17,15 +18,21 @@ class Theme:
                 raise ValueError(f'Theme "{theme}" not found')  # TODO improve feedback
         return path
 
-    def _read_frame(self):
-        path = self.path / 'frame.html'
+    def _read_document(self):
+        path = self.path / 'document.html'
         if not path.is_file():
-            raise ValueError('Theme does not contain a file named "frame.html"')
+            raise ValueError('Theme does not contain a file named "document.html"')
+        return path.read_text()
+
+    def _read_404(self):
+        path = self.path / '404.html'
+        if not path.is_file():
+            return None
         return path.read_text()
 
     def _read_partials(self):
         result = {}
         for partial in self.path.glob('*.html'):
-            if partial.name != 'frame.html':
+            if partial.name != 'document.html':
                 result[partial.name[:-5]] = partial.read_text()
         return result

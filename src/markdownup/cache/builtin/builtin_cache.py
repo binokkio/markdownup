@@ -16,7 +16,12 @@ class BuiltinCache(Cache):
         response = requests.get(url)
         return None if response.status_code == 404 else response.text
 
-    def put(self, key: str, value: bytes):
+    def put(self, key: str, value: bytes) -> None:
         url = self.cache_url + key
         response = requests.put(url, value)
+        response.raise_for_status()
+
+    def delete(self, key: str) -> None:
+        url = self.cache_url + key
+        response = requests.delete(url)
         response.raise_for_status()

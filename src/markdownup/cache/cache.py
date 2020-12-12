@@ -20,5 +20,9 @@ class Cache(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def put(self, key: str, value: bytes):
+    def put(self, key: str, value: bytes) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def delete(self, key: str) -> None:
         raise NotImplementedError()

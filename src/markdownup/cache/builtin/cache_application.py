@@ -40,6 +40,10 @@ class CacheApplication(BaseApplication):
             else:
                 start_response('404 Not Found', [])
                 yield from iter([])
+        elif method == 'DELETE':
+            self.cache.pop(key, None)
+            start_response('200 OK', [])
+            yield from iter([])
         else:
             start_response('405 Method Not Allowed', [])
             yield from iter([])

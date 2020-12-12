@@ -1,0 +1,24 @@
+{{#root}}
+    <div class="header">
+        {{#index}}
+            <a class="title" href="{{request_path}}">{{name}}</a>
+        {{/index}}
+        {{#auth}}
+            {{#authenticated}}
+                <span class="auth">
+                    {{#display_name}}
+                        <span class="auth_display_name">{{display_name}}</span> ::
+                    {{/display_name}}
+                    <a href="?logout=yes">Log out</a>
+                </span>
+            {{/authenticated}}
+            {{^authenticated}}
+                <a href="?login=yes">Log in</a>
+            {{/authenticated}}
+        {{/auth}}
+    </div>
+
+    <div class="menu">
+        {{>menu}}
+    </div>
+{{/root}}
