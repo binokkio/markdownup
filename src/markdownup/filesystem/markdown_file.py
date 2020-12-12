@@ -29,10 +29,8 @@ class MarkdownFile(Entry, File):
         self.context.root.apply_access(environ)
 
         html = chevron.render(
-            template=self.context.theme.frame,
+            template=self.context.theme.document,
             partials_dict=self.context.theme.partials,
-            # partials_path=str(self.context.theme.path),
-            # partials_ext='html',
             data={
                 'title': self.name,
                 'file': self,

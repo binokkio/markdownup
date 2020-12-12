@@ -3,6 +3,7 @@ from os.path import normpath
 from pathlib import Path
 from typing import List
 
+import chevron
 from markdown.inlinepatterns import Pattern
 
 from markdownup.auth.auth_provider import AuthProvider
@@ -66,5 +67,24 @@ class MarkdownUp:
         if theme_file.is_file():
             return AssetFile(theme_file).get_response(environ)
 
-        # serve 404
+        # serve theme 404
+        if self.theme.error_404:
+            self.root.apply_access(environ)
+            html = chevron.render(
+                template=self.theme.error_404,
+                partials_dict=self.theme.partials,
+                data={
+                    'title': '404 Not Found',
+                    'root': self.root,
+                    'auth': environ.get('auth', None)
+                }
+            )
+
+            return Response(
+                '404 Not Found',
+                [('Content-Type', 'text/html')],
+                (bytes(b, 'UTF-8') for b in html.splitlines(keepends=True))
+            )
+
+        # serve plain 404
         return Response('404 Not Found')

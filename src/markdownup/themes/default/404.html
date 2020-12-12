@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>{{title}}</title>
+        <link rel="stylesheet" type="text/css" href="/main.css" />
+    </head>
+
+    <body>
+        {{>header-and-menu}}
+
+        <div class="document">
+            <div class="content">
+                <h1>404 Not Found</h1>
+                {{#auth}}
+                    {{#authenticated}}
+                        <p>
+                            You might not be authorized to view this page, if it exists.
+                        </p>
+                    {{/authenticated}}
+                    {{^authenticated}}
+                        <p>
+                            You might need to <a href="?login=yes">log in</a> to view this page, if it exists.
+                        </p>
+                    {{/authenticated}}
+                {{/auth}}
+                {{^auth}}
+                    <p>
+                        The requested page could not be found.
+                    </p>
+                {{/auth}}
+            </div>
+        </div>
+    </body>
+</html>

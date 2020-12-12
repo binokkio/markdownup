@@ -41,9 +41,17 @@ class Keycloak(AuthProvider):
 
         session_id = self._get_session_id(environ)
         cache_key = 'session/' + session_id
+        query = parse_qs(environ['QUERY_STRING'])
+
+        if 'login' in query and query['login'][0] == 'yes':
+            location = self.auth_url + '&' + urlencode({'redirect_uri': self._get_redirect_url(environ)})
+            return self._get_redirect_response(location, session_id)
+
+        if 'logout' in query and query['logout'][0] == 'yes':
+            self.cache.delete(cache_key)
+            return self._get_redirect_response(self._get_redirect_url(environ), session_id)
 
         # handle incoming Keycloak redirect
-        query = parse_qs(environ['QUERY_STRING'])
         if 'code' in query:
 
             redirect_url = self._get_redirect_url(environ)
@@ -55,29 +63,25 @@ class Keycloak(AuthProvider):
                     'grant_type': 'authorization_code',
                     'code': query['code'][0],
                     'redirect_uri': redirect_url
-                }
-            )
+                })
             token_response.raise_for_status()
 
             access_token = token_response.json()['access_token']
             self.cache.put(cache_key, access_token)
-
-            # set cookie and redirect to self (removes the keycloak query parameters)
             return self._get_redirect_response(redirect_url, session_id)
-        else:
-            access_token = self.cache.get(cache_key)
 
-        if not access_token:  # TODO or expired
-            location = self.auth_url + '&' + urlencode({'redirect_uri': self._get_redirect_url(environ)})
-            return self._get_redirect_response(location, session_id)
-
-        access_token = jwt.decode(access_token, verify=False)
-        environ['access_token'] = access_token
         environ['auth'] = {
-            'display_name': rget(access_token, *self.display_name_keys) if self.display_name_keys else None,
-            'roles': set(rget(access_token, *self.roles_keys)) if self.roles_keys else None,
-            'access_token': access_token
+            'available': True
         }
+
+        access_token = self.cache.get(cache_key)
+        if access_token:  # TODO and not expired
+            access_token = jwt.decode(access_token, verify=False)
+            environ['auth']['authenticated'] = {
+                'display_name': rget(access_token, *self.display_name_keys) if self.display_name_keys else None,
+                'roles': set(rget(access_token, *self.roles_keys)) if self.roles_keys else None,
+                'access_token': access_token
+            }
 
         return None
 
@@ -92,7 +96,6 @@ class Keycloak(AuthProvider):
         return session_id
 
     def _get_redirect_url(self, environ):
-        # TODO include query params
         return self.config.get('access', 'auth', 'redirect_url') + (environ['PATH_INFO'] or '/')
 
     @staticmethod

@@ -93,7 +93,7 @@ class Directory(Entry):
         self.has_children = len(self.children) > 0
 
     def is_accessible(self, environ):
-        if not self.access_roles:
+        if self.access_roles is None:
             return True  # no access rules defined, access allowed
         if 'roles' not in environ:
             return False  # access rules defined but user has no roles, access denied
