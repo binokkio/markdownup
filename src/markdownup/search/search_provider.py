@@ -27,7 +27,7 @@ def search(context, environ, search_terms):
 def get_search_response(context, environ, request):
 
     search_terms = request['terms'][0]
-    search_results = search(context, search_terms.split(' '))
+    search_results = search(context, environ, search_terms.split(' '))
 
     html = chevron.render(
         template=context.theme.html['search-results'],
