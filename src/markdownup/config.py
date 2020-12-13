@@ -21,7 +21,6 @@ default_config = {
         'exclusions': [
             r'.*/\.'  # exclude hidden files and directories by default
         ],
-        'accessFilename': '.upaccess',
         'indices': [
             'README.md',
             'index.md'

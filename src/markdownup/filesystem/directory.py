@@ -40,9 +40,11 @@ class Directory(Entry):
         self.traversed = False  # keeps track of having been traversed during the most recent resolve call
 
     def read_access_file(self) -> Optional[Set[str]]:
-        access_file_path = self.path / self.config.get('content', 'accessFilename')
-        if access_file_path.is_file():
-            return set(access_file_path.read_text('UTF-8').splitlines())
+        access_file_name = self.config.get('access', 'filename')
+        if access_file_name:
+            access_file_path = self.path / access_file_name
+            if access_file_path.is_file():
+                return set(access_file_path.read_text('UTF-8').splitlines())
         return None
 
     def resolve(self, environ, path: Path) -> Optional[File]:
