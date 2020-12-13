@@ -3,6 +3,10 @@
         {{#index}}
             <a class="title" href="{{request_path}}">{{name}}</a>
         {{/index}}
+        <form method="post" class="search">
+            <input type="hidden" name="action" value="search" />
+            <input type="text" name="terms" placeholder="search" value="{{search_terms}}" />
+        </form>
         {{#auth}}
             {{#authenticated}}
                 <span class="auth">

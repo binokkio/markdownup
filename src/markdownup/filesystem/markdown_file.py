@@ -102,8 +102,8 @@ class MarkdownFile(Entry, File):
         haystack = self.path.read_text()
         index = 0
         for needle in self._search_term_pattern.finditer(haystack):
+            index += 1
             search_term = needle.group(0).lower()
             if search_term not in search_index:
                 search_index[search_term] = index
-            index += 1
         return search_index

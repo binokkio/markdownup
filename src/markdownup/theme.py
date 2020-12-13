@@ -6,6 +6,7 @@ class Theme:
     def __init__(self, config):
         self.path = self._resolve_path(config.get('main', 'theme'))
         self.document = self._read_document()
+        self.search_results = self._read_search_results()
         self.error_404 = self._read_404()
         self.partials = self._read_partials()
 
@@ -22,6 +23,12 @@ class Theme:
         path = self.path / 'document.html'
         if not path.is_file():
             raise ValueError('Theme does not contain a file named "document.html"')
+        return path.read_text()
+
+    def _read_search_results(self):
+        path = self.path / 'search-results.html'
+        if not path.is_file():
+            raise ValueError('Theme does not contain a file named "search-results.html"')
         return path.read_text()
 
     def _read_404(self):

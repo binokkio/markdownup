@@ -138,7 +138,8 @@ def test_search():
         }
     }))
 
-    results = markdownup.search({}, ["THIS"])
+    markdownup.root.apply_access({})  # TODO temp fix
+    results = markdownup.search(["THIS"])
 
     assert len(results) == 2
     assert results[0].name == 'Hello, World!'

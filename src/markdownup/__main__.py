@@ -20,8 +20,8 @@ def _main():
         if as_path.is_dir():
             config = Config.from_dict({'content': {'root': sys.argv[1]}})
         elif as_path.is_file():
-            os.chdir(as_path.parent)  # pretend to run from the config's parent dir
             config = Config.from_file(as_path)
+            os.chdir(as_path.parent)  # pretend to run from the config's parent dir
 
         if config:
 

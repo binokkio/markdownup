@@ -20,21 +20,45 @@ body {
     right: 0;
     height: 48px;
     padding: 0 32px;
+    color: #f8f8f8;
     background-color: #282838;
     filter: drop-shadow(0px 0px 6px #666);
     display: flex;
     justify-content: space-between;
-    font-size: 1.5em;
+    font-size: 24px;
     line-height: 48px;
 }
 
-.header * {
-    color: #f8f8f8;
+.header .title {
     flex-shrink: 0;
+    color: #f8f8f8;
+    text-decoration: none;
 }
 
-.header .title {
-    text-decoration: none;
+.header .search {
+    flex-grow: 1;
+}
+
+.header .search > input {
+    appearance: none;
+    border: none;
+    background-color: transparent;
+
+    width: calc(100% - 64px);
+    height: 48px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    margin: 0 32px;
+
+    font-family: sans-serif;
+    font-size: 24px;
+    color: #f8f8f8;
+}
+
+.header .search > input::placeholder {
+    color: gray;
+    font-style: italic;
 }
 
 .menu {
@@ -42,12 +66,12 @@ body {
     padding: 0 24px;
 }
 
-.document {
+.main {
     grid-column: 2;
+    margin: 32px;
 }
 
 .version {
-    margin: 32px;
     text-align: center;
     color: #aaa;
 }
@@ -62,11 +86,15 @@ h1, h2, h3, h4, h5, h6, th {
     background-color: #f8f8f8;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1, h2, h3, h4, h5, h6{
     margin: 32px 12px 12px 12px !important;
     padding: 6px 12px;
     border: 1px solid #ccc;
     filter: drop-shadow(0px 0px 6px #ccc);
+}
+
+hr {
+    color: #efefef;
 }
 
 a {
@@ -142,7 +170,7 @@ li {
     margin-left: 20px;
 }
 
-.document ul li::before {
+.content ul li::before {
     content: "\2022";  /* Add content: \2022 is the CSS Code/unicode for a bullet */
     color: #444;  /* Change the color */
     display: inline-block;  /* Needed to add space between the bullet and the text */
