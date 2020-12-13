@@ -20,7 +20,9 @@ class Directory(Entry):
 
         for entry in self.path.iterdir():
             str_path = str('/' / entry.relative_to(context.root_path))
-            if any(map(lambda exclusion: exclusion.search(str_path), self.context.exclusions)):
+            exclusion = next((exclusion for exclusion in context.exclusions if exclusion.search(str_path)), None)
+            if exclusion:
+                print(f'Excluding {entry} due to configured exclusion pattern  {exclusion.pattern}')
                 continue
             name = entry.name
             if entry.is_file() and name.endswith('.md'):
@@ -49,8 +51,9 @@ class Directory(Entry):
 
     def resolve(self, environ, path: Path) -> Optional[File]:
         str_path = str('/' / path)
-        if any(map(lambda exclusion: exclusion.search(str_path), self.context.exclusions)):
-            print(f'Access denied through global rules for {str_path}')
+        exclusion = next((exclusion for exclusion in self.context.exclusions if exclusion.search(str_path)), None)
+        if exclusion:
+            print(f'Not resolving {str_path} because it matched configured exclusion pattern {exclusion.pattern}')
             return None
         self._reset()
         return self._resolve(environ, list(path.parts))
