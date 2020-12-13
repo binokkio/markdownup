@@ -13,6 +13,7 @@ from markdownup.response import Response
 class MarkdownFile(Entry, File):
 
     _title_pattern = re.compile(r'^#\s?(.*)', re.MULTILINE)
+    _search_term_pattern = re.compile(r'\w{2,}')
 
     def __init__(self, context, path: Path, depth: int, is_index: bool = False):
 
@@ -21,6 +22,7 @@ class MarkdownFile(Entry, File):
         self.name = self._get_title(path.read_text()) or self.name
         self.request_path = '/' + '/'.join(path.parts[len(path.parts) - depth - 1:-1 if is_index else len(path.parts)])
         self.version = self._get_version_details()
+        self.search_index = self._get_search_index()
 
     def get_response(self, environ):
 
@@ -94,3 +96,14 @@ class MarkdownFile(Entry, File):
             return lines
         else:
             return None
+
+    def _get_search_index(self):
+        search_index = {}
+        haystack = self.path.read_text()
+        index = 0
+        for needle in self._search_term_pattern.finditer(haystack):
+            index += 1
+            search_term = needle.group(0).lower()
+            if search_term not in search_index:
+                search_index[search_term] = index
+        return search_index

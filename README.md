@@ -7,6 +7,7 @@ The main features are:
 - integration with external authentication solutions through Keycloak
 - display of versioning information from Git
 - interactive tree view of the served directories and Markdown files
+- basic search functionality
 - themeable with [Mustache templates](https://mustache.github.io/)
 - support for [Markdown extensions](https://python-markdown.github.io/extensions/)
 

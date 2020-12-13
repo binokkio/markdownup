@@ -128,3 +128,19 @@ def test_get_hidden_file_with_proper_config():
 
     assert response.status == '200 OK'
     assert next(response.body).decode('UTF-8') == '<p>This file must not be served with the default configuration.</p>'
+
+
+def test_search():
+
+    markdownup = MarkdownUp(Config.from_dict({
+        'content': {
+            'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root'),
+        }
+    }))
+
+    markdownup.root.apply_access({})  # TODO temp fix
+    results = markdownup.search(["THIS"])
+
+    assert len(results) == 2
+    assert results[0].name == 'Hello, World!'
+    assert results[1].name == 'Hello, nested World!'
