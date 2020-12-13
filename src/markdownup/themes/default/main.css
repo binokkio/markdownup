@@ -29,10 +29,13 @@ body {
     line-height: 48px;
 }
 
-.header .title {
-    flex-shrink: 0;
+.header a {
     color: #f8f8f8;
     text-decoration: none;
+}
+
+.header .title {
+    flex-shrink: 0;
 }
 
 .header .search {
