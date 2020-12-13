@@ -47,7 +47,7 @@ class MarkdownUp:
             return self.get(environ['PATH_INFO'] or '/', environ)
         elif request_method == 'POST':
             body = parse_qs(environ['wsgi.input'].read().decode('UTF-8'))
-            action = body.get('action', 'unknown')[0]
+            action = body.get('action', ['unknown'])[0]
             if action == 'search':
                 return get_search_response(self, environ, body)
             else:
