@@ -61,8 +61,8 @@ class MarkdownUp:
                 if self.root.is_accessible(environ):  # TODO temp fix
                     search_results = self.search(search_terms.split(' '))
                 html = chevron.render(
-                    template=self.theme.search_results,
-                    partials_dict=self.theme.partials,
+                    template=self.theme.html['search-results'],
+                    partials_dict=self.theme.html,
                     data={
                         'title': 'Search results',
                         'root': self.root,
@@ -105,11 +105,11 @@ class MarkdownUp:
             return AssetFile(theme_file).get_response(environ)
 
         # serve theme 404
-        if self.theme.error_404:
+        if '404' in self.theme.html:
             self.root.apply_access(environ)
             html = chevron.render(
-                template=self.theme.error_404,
-                partials_dict=self.theme.partials,
+                template=self.theme.html['404'],
+                partials_dict=self.theme.html,
                 data={
                     'title': '404 Not Found',
                     'root': self.root,
