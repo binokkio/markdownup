@@ -1,7 +1,7 @@
 import re
 from os.path import normpath
 from pathlib import Path
-from typing import List
+from typing import List, Dict
 
 import chevron
 from markdown.inlinepatterns import Pattern
@@ -11,6 +11,7 @@ from markdownup.cache.cache import Cache
 from markdownup.config import Config
 from markdownup.filesystem.asset_file import AssetFile
 from markdownup.filesystem.directory import Directory
+from markdownup.filesystem.markdown_file import MarkdownFile
 from markdownup.response import Response
 from markdownup.theme import Theme
 
@@ -88,3 +89,26 @@ class MarkdownUp:
 
         # serve plain 404
         return Response('404 Not Found')
+
+    def search(self, environ, terms: List[str]) -> List[MarkdownFile]:
+        result: Dict[MarkdownFile, float] = {}
+        self.root.apply_access(environ)
+        for markdown_file in MarkdownUp._get_markdown_files(self.root):
+            score = 0.0
+            for term in terms:
+                term_score = markdown_file.search_index.get(term.lower(), 0)
+                if term_score:
+                    score += 1.0 / term_score
+            if score:
+                result[markdown_file] = score
+        return [entry[0] for entry in sorted(result.items(), key=lambda entry: entry[1], reverse=True)]
+
+    @staticmethod
+    def _get_markdown_files(directory: Directory):
+        if directory.index:
+            yield directory.index
+        for child in directory.children:
+            if isinstance(child, MarkdownFile):
+                yield child
+            if isinstance(child, Directory):
+                yield from MarkdownUp._get_markdown_files(child)
