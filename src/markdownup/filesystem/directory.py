@@ -16,7 +16,7 @@ class Directory(Entry):
         self.index: Optional[MarkdownFile] = None
         self.directory_map: Dict[str, Directory] = {}
         self.file_map: Dict[str, MarkdownFile] = {}
-        self.access_roles: Optional[Set[str]] = self.read_access_file()
+        self.access_roles: Optional[Set[str]] = self._read_access_file()
 
         for entry in self.path.iterdir():
             str_path = str('/' / entry.relative_to(context.root_path))
@@ -39,7 +39,7 @@ class Directory(Entry):
         self.children = ChrevronList()
         self.traversed = False  # keeps track of having been traversed during the most recent resolve call
 
-    def read_access_file(self) -> Optional[Set[str]]:
+    def _read_access_file(self) -> Optional[Set[str]]:
         access_file_name = self.config.get('access', 'filename')
         if access_file_name:
             access_file_path = self.path / access_file_name
@@ -103,6 +103,21 @@ class Directory(Entry):
             return True  # overlap between access roles and user roles, access allowed
         else:
             return False  # no intersect between access roles and user roles, access denied
+
+    def get_markdown_files(self, environ):
+        if self.is_accessible(environ):
+            self.apply_access(environ)
+            yield from Directory._get_markdown_files(self)
+
+    @staticmethod
+    def _get_markdown_files(directory: 'Directory'):
+        if directory.index:
+            yield directory.index
+        for child in directory.children:
+            if isinstance(child, MarkdownFile):
+                yield child
+            if isinstance(child, Directory):
+                yield from Directory._get_markdown_files(child)
 
 
 class ChrevronList(list):

@@ -2,6 +2,7 @@ from pathlib import Path
 
 from markdownup.config import Config
 from markdownup.markdownup import MarkdownUp
+from markdownup.search.search_provider import search
 
 
 def test_get():
@@ -138,8 +139,7 @@ def test_search():
         }
     }))
 
-    markdownup.root.apply_access({})  # TODO temp fix
-    results = markdownup.search(["THIS"])
+    results = search(markdownup, {}, ["THIS"])
 
     assert len(results) == 2
     assert results[0].name == 'Hello, World!'
