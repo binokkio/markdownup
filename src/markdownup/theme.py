@@ -4,7 +4,7 @@ from pathlib import Path
 class Theme:
 
     def __init__(self, config):
-        self.path = self._resolve_path(config.get('main', 'theme'))
+        self.path = self._resolve_path(config.get('theme'))
         self.html = {html.name[:-5]: html.read_text() for html in self.path.glob('*.html')}
 
     @staticmethod

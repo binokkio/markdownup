@@ -8,7 +8,7 @@ from markdownup.search.search_provider import search
 def test_get():
 
     markdownup = MarkdownUp(Config.from_dict({
-        'main': {'theme': 'bare'},
+        'theme': 'bare',
         'content': {
             'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root'),
             'indices': []
@@ -36,7 +36,7 @@ def test_prevent_access_outside_root():
 def test_with_fs_theme():
 
     markdownup = MarkdownUp(Config.from_dict({
-        'main': {'theme': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'test_theme')},
+        'theme': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'test_theme'),
         'content': {
             'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root'),
             'indices': []
@@ -64,7 +64,7 @@ def test_serve_non_markdown_file():
 def test_title_not_on_first_line():
 
     markdownup = MarkdownUp(Config.from_dict({
-        'main': {'theme': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'test_theme')},
+        'theme': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'test_theme'),
         'content': {'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root')}
     }))
 
@@ -105,7 +105,7 @@ def test_hidden_file_request_yields_404():
 def test_get_theme_asset():
 
     markdownup = MarkdownUp(Config.from_dict({
-        'main': {'theme': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'test_theme')},
+        'theme': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'test_theme'),
         'content': {'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root')}
     }))
 
@@ -118,7 +118,7 @@ def test_get_theme_asset():
 def test_get_hidden_file_with_proper_config():
 
     markdownup = MarkdownUp(Config.from_dict({
-        'main': {'theme': 'bare'},
+        'theme': 'bare',
         'content': {
             'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root'),
             'exclusions': []
