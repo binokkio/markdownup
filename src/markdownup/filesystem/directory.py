@@ -70,7 +70,7 @@ class Directory(Entry):
         elif next_part in self.directory_map:
             return self.directory_map[next_part]._resolve(environ, parts)
         else:
-            asset_file_path = self.path / next_part
+            asset_file_path = self.path / next_part / '/'.join(parts)
             if asset_file_path.is_file():
                 return AssetFile(asset_file_path)
             else:
@@ -100,9 +100,9 @@ class Directory(Entry):
     def is_accessible(self, environ):
         if self.access_roles is None:
             return True  # no access rules defined, access allowed
-        if 'roles' not in environ:
+        if 'authenticated' not in environ['auth']:
             return False  # access rules defined but user has no roles, access denied
-        if self.access_roles & environ['roles']:
+        if self.access_roles & environ['auth']['authenticated']['roles']:  # TODO find first match is probably a faster
             return True  # overlap between access roles and user roles, access allowed
         else:
             return False  # no intersect between access roles and user roles, access denied

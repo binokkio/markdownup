@@ -36,10 +36,28 @@ The configuration file created by the --start-config flag contains the default s
 The configuration of features that are not configured by default is described here.
 
 
+### Authentication with HTTP basic auth
+
+The `access` YAML structure can be extended as follows to get started with HTTP basic auth.
+
+```
+access:
+  filename: .upaccess
+  auth:
+    type: basic-auth
+    realm: actual-realm-name
+    users:
+      actual-user-name:
+        password: plain-text-password
+        roles:
+        - actual-role-1
+        - actual-role-2
+```
+
+
 ### Authentication with Keycloak
 
-Authentication is not configured by default and therefore missing from the default config.
-The following YAML structure can be added to the root of the configuration file to get started.
+The `access` YAML structure can be extended as follows to get started with Keycloak auth.
 
 ```
 access:

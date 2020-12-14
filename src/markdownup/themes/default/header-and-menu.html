@@ -17,7 +17,9 @@
                 </span>
             {{/authenticated}}
             {{^authenticated}}
-                <a href="?login=yes">Log in</a>
+                {{#available}}
+                    <a href="?login=yes">Log in</a>
+                {{/available}}
             {{/authenticated}}
         {{/auth}}
     </div>

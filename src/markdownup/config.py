@@ -25,6 +25,9 @@ default_config = {
         ],
         'gits': {}
     },
+    'access': {
+        'filename': '.upaccess'
+    },
     'markdown': {
         'extensions': {
             'extra': {},

@@ -70,10 +70,6 @@ class Keycloak(AuthProvider):
             self.cache.put(cache_key, access_token)
             return self._get_redirect_response(redirect_url, session_id)
 
-        environ['auth'] = {
-            'available': True
-        }
-
         access_token = self.cache.get(cache_key)
         if access_token:  # TODO and not expired
             access_token = jwt.decode(access_token, verify=False)
