@@ -10,7 +10,7 @@ def test_get():
     markdownup = MarkdownUp(Config.from_dict({
         'theme': 'bare',
         'content': {
-            'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root'),
+            'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'dummy_docs'),
             'indices': []
         }
     }))
@@ -24,7 +24,7 @@ def test_get():
 def test_prevent_access_outside_root():
 
     markdownup = MarkdownUp(Config.from_dict({
-        'content': {'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root' / 'subdir')}
+        'content': {'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'dummy_docs' / 'subdir')}
     }))
 
     response = markdownup.get('../index.md')
@@ -38,7 +38,7 @@ def test_with_fs_theme():
     markdownup = MarkdownUp(Config.from_dict({
         'theme': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'test_theme'),
         'content': {
-            'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root'),
+            'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'dummy_docs'),
             'indices': []
         }
     }))
@@ -52,7 +52,7 @@ def test_with_fs_theme():
 def test_serve_non_markdown_file():
 
     markdownup = MarkdownUp(Config.from_dict({
-        'content': {'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root')}
+        'content': {'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'dummy_docs')}
     }))
 
     response = markdownup.get('/dummy-asset.txt')
@@ -65,7 +65,7 @@ def test_title_not_on_first_line():
 
     markdownup = MarkdownUp(Config.from_dict({
         'theme': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'test_theme'),
-        'content': {'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root')}
+        'content': {'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'dummy_docs')}
     }))
 
     response = markdownup.get('/title_not_on_first_line.md')
@@ -79,7 +79,7 @@ def test_hidden_directory_request_yields_404():
     # 404 because we don't want to expose the fact it exists
 
     markdownup = MarkdownUp(Config.from_dict({
-        'content': {'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root')}
+        'content': {'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'dummy_docs')}
     }))
 
     response = markdownup.get('/.hidden/hidden.md')
@@ -93,7 +93,7 @@ def test_hidden_file_request_yields_404():
     # 404 because we don't want to expose the fact it exists
 
     markdownup = MarkdownUp(Config.from_dict({
-        'content': {'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root')}
+        'content': {'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'dummy_docs')}
     }))
 
     response = markdownup.get('/.hidden.md')
@@ -106,7 +106,7 @@ def test_get_theme_asset():
 
     markdownup = MarkdownUp(Config.from_dict({
         'theme': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'test_theme'),
-        'content': {'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root')}
+        'content': {'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'dummy_docs')}
     }))
 
     response = markdownup.get('/frame.css')
@@ -120,7 +120,7 @@ def test_get_hidden_file_with_proper_config():
     markdownup = MarkdownUp(Config.from_dict({
         'theme': 'bare',
         'content': {
-            'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root'),
+            'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'dummy_docs'),
             'exclusions': []
         }
     }))
@@ -135,12 +135,36 @@ def test_search():
 
     markdownup = MarkdownUp(Config.from_dict({
         'content': {
-            'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'markdown_repository_root'),
+            'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'dummy_docs')
         }
     }))
 
-    results = search(markdownup, {}, ["THIS"])
+    results = search(markdownup, {'auth': {}}, ["THIS"])
 
     assert len(results) == 2
     assert results[0].name == 'Hello, World!'
     assert results[1].name == 'Hello, nested World!'
+
+
+def test_search_with_auth():
+
+    markdownup = MarkdownUp(Config.from_dict({
+        'content': {
+            'root': str(Path(__file__).parent / '..' / '..' / 'test_resources' / 'dummy_docs'),
+        }
+    }))
+
+    results = search(markdownup, {
+        'auth': {
+            'authenticated': {
+                'roles': {
+                    'keepers'
+                }
+            }
+        }
+    }, ["THIS"])
+
+    assert len(results) == 3
+    assert results[0].name == 'Hello, World!'
+    assert results[1].name == 'Hello, nested World!'
+    assert results[2].name == 'Hello, secret nested World!'

@@ -39,9 +39,12 @@ class MarkdownUp:
         request_method = environ['REQUEST_METHOD']
 
         if self.auth_provider:
+            environ['auth'] = {'available': True}
             auth_response = self.auth_provider.handle_request(environ)
             if auth_response:
                 return auth_response
+        else:
+            environ['auth'] = {'available': False}
 
         if request_method == 'GET':
             return self.get(environ['PATH_INFO'] or '/', environ)
@@ -57,7 +60,7 @@ class MarkdownUp:
 
     def get(self, path: str, environ=None) -> 'Response':
 
-        environ = environ or {}
+        environ = environ or {'auth': {'available': False}}
 
         # normalize path
         if not path.startswith('/'):

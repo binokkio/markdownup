@@ -16,6 +16,9 @@ class AuthProvider(ABC):
             elif auth_type == 'keycloak':
                 from markdownup.auth.keycloak.keycloak import Keycloak
                 return Keycloak(context)
+            elif auth_type == 'basic-auth':
+                from markdownup.auth.basicauth.basic_auth import BasicAuth
+                return BasicAuth(context)
             else:
                 raise ValueError('Unknown auth type: ' + auth_type)
         else:
