@@ -25,17 +25,15 @@ class Directory(Entry):
                 print(f'Excluding {entry} due to configured exclusion pattern  {exclusion.pattern}')
                 continue
             name = entry.name
-            if entry.is_file() and name.endswith('.md'):
-                if not self.index and name in context.config.get('content', 'indices'):
+            if entry.is_dir():
+                self.directory_map[name] = Directory(context, entry, depth + 1)
+            elif entry.is_file() and name.endswith('.md'):
+                if self.index or name not in context.config.get('content', 'indices'):
+                    self.file_map[name] = MarkdownFile(context, entry, depth)
+                else:
                     self.index = MarkdownFile(context, entry, depth, is_index=True)
                     self.name = self.index.name
                     self.request_path = self.index.request_path
-                else:
-                    self.file_map[name] = MarkdownFile(context, entry, depth)
-            elif entry.is_dir():
-                sub_directory = Directory(context, entry, depth + 1)
-                if sub_directory.directory_map or sub_directory.file_map or sub_directory.index:
-                    self.directory_map[name] = sub_directory
 
         # these are updated for every request
         self.children = ChrevronList()
@@ -70,11 +68,10 @@ class Directory(Entry):
         elif next_part in self.directory_map:
             return self.directory_map[next_part]._resolve(environ, parts)
         else:
-            asset_file_path = self.path / next_part / '/'.join(parts)
+            asset_file_path = self.path / next_part
             if asset_file_path.is_file():
                 return AssetFile(asset_file_path)
-            else:
-                return None
+        return None
 
     def _reset(self):
         if self.traversed:
