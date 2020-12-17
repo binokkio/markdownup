@@ -5,6 +5,7 @@ from markdownup.filesystem.asset_file import AssetFile
 from markdownup.filesystem.entry import Entry
 from markdownup.filesystem.file import File
 from markdownup.filesystem.markdown_file import MarkdownFile
+from markdownup.response import ResponseException
 
 
 class Directory(Entry):
@@ -18,7 +19,17 @@ class Directory(Entry):
         self.file_map: Dict[str, MarkdownFile] = {}
         self.access_roles: Optional[Set[str]] = self._read_access_file()
 
+        for index_filename in self.config.get('content', 'indices'):
+            index_path = self.path / index_filename
+            if index_path.is_file():
+                self.index = MarkdownFile(context, index_path, depth)
+                self.name = self.index.name
+                self.request_path = self.index.request_path
+                break
+
         for entry in self.path.iterdir():
+            if self.index and self.index.path == entry:
+                continue
             str_path = str('/' / entry.relative_to(context.root_path))
             exclusion = next((exclusion for exclusion in context.exclusions if exclusion.search(str_path)), None)
             if exclusion:
@@ -28,12 +39,7 @@ class Directory(Entry):
             if entry.is_dir():
                 self.directory_map[name] = Directory(context, entry, depth + 1)
             elif entry.is_file() and name.endswith('.md'):
-                if self.index or name not in context.config.get('content', 'indices'):
-                    self.file_map[name] = MarkdownFile(context, entry, depth)
-                else:
-                    self.index = MarkdownFile(context, entry, depth, is_index=True)
-                    self.name = self.index.name
-                    self.request_path = self.index.request_path
+                self.file_map[name] = MarkdownFile(context, entry, depth)
 
         # these are updated for every request
         self.children = ChrevronList()
@@ -60,9 +66,11 @@ class Directory(Entry):
         if not self.is_accessible(environ):
             return None
         self.traversed = True
-        if len(parts) == 0:
-            return self.index
+        if len(parts) == 0 and self.request_path:
+            raise ResponseException('302 Found', [('Location', self.request_path)])
         next_part = parts.pop(0)
+        if self.index and next_part == self.index.path.name:
+            return self.index
         if next_part in self.file_map:
             return self.file_map[next_part]
         elif next_part in self.directory_map:

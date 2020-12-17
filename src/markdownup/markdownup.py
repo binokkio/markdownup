@@ -12,7 +12,7 @@ from markdownup.cache.cache import Cache
 from markdownup.config import Config
 from markdownup.filesystem.asset_file import AssetFile
 from markdownup.filesystem.directory import Directory
-from markdownup.response import Response
+from markdownup.response import Response, ResponseException
 from markdownup.search.search_provider import get_search_response
 from markdownup.theme import Theme
 
@@ -70,9 +70,12 @@ class MarkdownUp:
         rel_path = Path(*abs_path.parts[1:])
 
         # serve markdown
-        file = self.root.resolve(environ, rel_path)
-        if file:
-            return file.get_response(environ)
+        try:
+            file = self.root.resolve(environ, rel_path)
+            if file:
+                return file.get_response(environ)
+        except ResponseException as e:
+            return e.response
 
         # serve theme file
         theme_file = self.theme.path / rel_path
