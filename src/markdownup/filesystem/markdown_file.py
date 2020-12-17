@@ -15,12 +15,12 @@ class MarkdownFile(Entry, File):
     _title_pattern = re.compile(r'^#\s?(.*)', re.MULTILINE)
     _search_term_pattern = re.compile(r'\w{2,}')
 
-    def __init__(self, context, path: Path, depth: int, is_index: bool = False):
+    def __init__(self, context, path: Path, depth: int):
 
         super().__init__(context, path, depth)
 
         self.name = self._get_title(path.read_text()) or self.name
-        self.request_path = '/' + '/'.join(path.parts[len(path.parts) - depth - 1:-1 if is_index else len(path.parts)])
+        self.request_path = '/' + '/'.join(path.parts[len(path.parts) - depth - 1:])
         self.version = self._get_version_details()
         self.search_index = self._get_search_index()
 
