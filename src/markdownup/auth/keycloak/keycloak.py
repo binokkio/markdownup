@@ -23,7 +23,7 @@ class Keycloak(AuthProvider):
         self.display_name_keys = context.config.get('access', 'auth', 'display_name')
         self.display_name_keys = self.display_name_keys.split('.') if self.display_name_keys else None
         self.roles_keys = context.config.get('access', 'auth', 'roles') or []
-        self.roles_keys = map(lambda s: s.split('.'), self.roles_keys)
+        self.roles_keys = list(map(lambda s: s.split('.'), self.roles_keys))
 
         base_url = \
             self.config.get('access', 'auth', 'auth_url').rstrip('/') + \
