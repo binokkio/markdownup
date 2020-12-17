@@ -1,3 +1,4 @@
+import json
 from http.cookies import BaseCookie
 from typing import Optional
 from urllib.parse import parse_qs, urlencode
@@ -21,8 +22,8 @@ class Keycloak(AuthProvider):
         self.client_id = context.config.get('access', 'auth', 'client_id')
         self.display_name_keys = context.config.get('access', 'auth', 'display_name')
         self.display_name_keys = self.display_name_keys.split('.') if self.display_name_keys else None
-        self.roles_keys = context.config.get('access', 'auth', 'roles')
-        self.roles_keys = self.roles_keys.split('.') if self.roles_keys else None
+        self.roles_keys = context.config.get('access', 'auth', 'roles') or []
+        self.roles_keys = map(lambda s: s.split('.'), self.roles_keys)
 
         base_url = \
             self.config.get('access', 'auth', 'auth_url').rstrip('/') + \
@@ -67,17 +68,22 @@ class Keycloak(AuthProvider):
             token_response.raise_for_status()
 
             access_token = token_response.json()['access_token']
-            self.cache.put(cache_key, access_token)
-            return self._get_redirect_response(redirect_url, session_id)
-
-        access_token = self.cache.get(cache_key)
-        if access_token:  # TODO and not expired
             access_token = jwt.decode(access_token, verify=False)
-            environ['auth']['authenticated'] = {
+
+            cache_value = {
                 'display_name': rget(access_token, *self.display_name_keys) if self.display_name_keys else None,
-                'roles': set(rget(access_token, *self.roles_keys)) if self.roles_keys else None,
+                'roles': list(self._get_roles(access_token)),
                 'access_token': access_token
             }
+
+            self.cache.put(cache_key, json.dumps(cache_value).encode('UTF-8'))
+            return self._get_redirect_response(redirect_url, session_id)
+
+        cache_value = self.cache.get(cache_key)
+        if cache_value:  # TODO and not expired
+            cache_value = json.loads(cache_value)
+            cache_value['roles'] = set(cache_value['roles'])
+            environ['auth']['authenticated'] = cache_value
 
         return None
 
@@ -101,3 +107,13 @@ class Keycloak(AuthProvider):
                 ('Set-Cookie', f'session={session_id}'),
                 ('Location', str(location))
             ], iter([]))
+
+    def _get_roles(self, access_token):
+        roles = set()
+        for roles_keys in self.roles_keys:
+            value = rget(access_token, *roles_keys)
+            if isinstance(value, list):
+                roles.update(value)
+            else:
+                roles.add(value)
+        return roles
