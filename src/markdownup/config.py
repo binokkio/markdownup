@@ -31,7 +31,9 @@ default_config = {
     'markdown': {
         'extensions': {
             'extra': {},
-            'codehilite': {}
+            'codehilite': {
+                'guess_lang': False
+            }
         }
     }
 }
