@@ -120,6 +120,10 @@ th, td {
     border: 1px solid #ccc;
 }
 
+.codehilitetable td {
+    padding: 0;
+}
+
 pre {
     padding: 6px 12px;
     font-size: 1.1em;
