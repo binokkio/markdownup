@@ -36,7 +36,19 @@ The configuration file created by the --start-config flag contains the default s
 The configuration of features that are not configured by default is described here.
 
 
-### Authentication with HTTP basic auth
+### Access control
+
+MarkdownUp will look for a file with the name as configured at `access.filename` in each content directory.
+This file should contain the roles and groups with access to the parent directory of the access file.
+The structure of this file is simply 1 role or group per line.
+MarkdownUp will respond with a 404 Not Found for files which the authenticated user does not have access to.
+The 404 is given instead of a 401/403 to prevent exposing that content exists for the given URL.
+
+Authentication is not configured by default meaning that any directory with a non-empty access file will be inaccessible.
+The following sections describe different authentication configurations. 
+
+
+#### Authentication with HTTP basic auth
 
 The `access` YAML structure can be extended as follows to get started with HTTP basic auth.
 
@@ -55,7 +67,7 @@ access:
 ```
 
 
-### Authentication with Keycloak
+#### Authentication with Keycloak
 
 The `access` YAML structure can be extended as follows to get started with Keycloak auth.
 
@@ -69,7 +81,8 @@ access:
     realm: 
     client_id: 
     display_name: preferred_username
-    roles: realm_access.roles
+    roles:
+    - realm_access.roles
 ```
 
 |Configuration key       |Description                                                                                       |
@@ -81,13 +94,7 @@ access:
 |access.auth.realm       |The Keycloak realm to use                                                                         |
 |access.auth.client_id   |The Keycloak client id to use                                                                     |
 |access.auth.display_name|The key in the Keycloak access token from which to take the display name of the authenticated user|
-|access.auth.roles       |The key in the Keycloak access token from which to take the roles of the authenticated user       |
-
-With the above configured MarkdownUp will look for a file with the name as given at `access.filename` in each content directory.
-This file should contain the roles and groups with access to parent directory of the access file.
-The structure of this file is simply 1 role or group per line.
-MarkdownUp will respond with a 404 Not Found for files which the authenticated user does not have access to.
-The 404 is given instead of a 401/403 to prevent exposing that content exists for the given URL.
+|access.auth.roles       |List of keys in the Keycloak access token from which to take the roles of the authenticated user  |
 
 
 ## Custom themes
