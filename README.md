@@ -100,5 +100,5 @@ access:
 ## Custom themes
 
 Run `python -m markdownup --start-theme theme-name` to get started with a new theme.
-Add the path to the new theme in the config YAML at `main.theme`.
+Add the path to the new theme in the config YAML at `theme`.
 Modify the files in the theme directory to get the desired result.
