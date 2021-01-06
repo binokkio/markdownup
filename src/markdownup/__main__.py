@@ -22,18 +22,19 @@ def _main():
         elif as_path.is_file():
             config = Config.from_file(as_path)
             os.chdir(as_path.parent)  # pretend to run from the config's parent dir
+        else:
+            print(f'No such file or directory: {as_path}')
+            exit(3)
 
-        if config:
+        # launch a new process for the built in cache server, a bit crude but suffices for now
+        if config.get('cache', 'type') == 'builtin':
+            Process(target=CacheApplication(config).run).start()
 
-            # launch a new process for the built in cache server, a bit crude but suffices for now
-            if config.get('cache', 'type') == 'builtin':
-                Process(target=CacheApplication(config).run).start()
+        # launch the main MarkdownUp WSGI application
+        WsgiApplication(config).run()
 
-            # launch the main MarkdownUp WSGI application
-            WsgiApplication(config).run()
-
-            # if the above returns we exit normally
-            exit(0)
+        # if the above returns we exit normally
+        exit(0)
 
     if len(sys.argv) > 2:
         if sys.argv[1] == '--start-config':
