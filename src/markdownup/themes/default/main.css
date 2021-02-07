@@ -144,6 +144,10 @@ li {
     padding: 2px;
 }
 
+li p {
+    display: inline;
+}
+
 .menu li > input {
     appearance: none;
     -webkit-appearance: none;
