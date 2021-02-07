@@ -21,7 +21,7 @@ setuptools.setup(
         'gunicorn',
         'markdown',
         'pygments',
-        'pyjwt',
+        'pyjwt>=2',
         'pyyaml',
         'requests'
     ]

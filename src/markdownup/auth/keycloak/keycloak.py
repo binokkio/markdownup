@@ -68,7 +68,7 @@ class Keycloak(AuthProvider):
             token_response.raise_for_status()
 
             access_token = token_response.json()['access_token']
-            access_token = jwt.decode(access_token, verify=False)
+            access_token = jwt.decode(access_token, options={'verify_signature': False})
 
             cache_value = {
                 'display_name': rget(access_token, *self.display_name_keys) if self.display_name_keys else None,
