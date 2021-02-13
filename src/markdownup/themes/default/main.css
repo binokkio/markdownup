@@ -131,21 +131,13 @@ pre {
     font-size: 1.1em;
 }
 
-ol {
-    padding-left: 20px;
+li {
+    padding-top: 3px;
 }
 
-ul {
+.menu ul {
     list-style: none; /* Remove default bullets */
     padding-left: 12px;
-}
-
-li {
-    padding: 2px;
-}
-
-li p {
-    display: inline;
 }
 
 .menu li > input {
@@ -181,16 +173,6 @@ li p {
 
 .menu a:only-child {
     margin-left: 20px;
-}
-
-.content ul li::before {
-    content: "\2022";  /* Add content: \2022 is the CSS Code/unicode for a bullet */
-    color: #444;  /* Change the color */
-    display: inline-block;  /* Needed to add space between the bullet and the text */
-    width: 1em;  /* Also needed for space (tweak if needed) */
-    margin-left: -1em;  /* Also needed for space (tweak if needed) */
-    position: relative;
-    top: 1px;
 }
 
 img, video {

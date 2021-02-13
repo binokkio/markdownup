@@ -42,7 +42,8 @@ class MarkdownFile(Entry, File):
                     extension_configs=self.config.get('markdown', 'extensions')
                 ),
                 'root': self.context.root,
-                'auth': environ.get('auth', None)
+                'auth': environ.get('auth', None),
+                'config': self.context.config.get('render')
             }
         )
 
