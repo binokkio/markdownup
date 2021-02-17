@@ -51,9 +51,6 @@ body {
 
     width: calc(100% - 64px);
     height: 48px;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
     margin: 0 32px;
 
     font-family: sans-serif;
@@ -106,6 +103,10 @@ a {
     color: blue;
 }
 
+p {
+    line-height: 1.4rem;
+}
+
 table, pre {
     background-color: #f2f2f2;
     border: 1px solid #ccc;
@@ -122,17 +123,38 @@ th, td {
     border: 1px solid #ccc;
 }
 
-.codehilitetable td {
-    padding: 0;
+/* https://code.iamkate.com/html-and-css/fixing-browsers-broken-monospace-font-handling/ */
+pre, code, kbd, samp, tt {
+  font-family: monospace, monospace;
+  font-size: 1em;
 }
 
 pre {
     padding: 6px 12px;
-    font-size: 1.1em;
+}
+
+code {
+    padding: 0 3px;
+    margin: 0 3px;
+    background-color: #f8dec6;
+    border: 1px solid #f6b472;
+    border-radius: 4px;
+    white-space: pre;
+}
+
+pre code {
+    padding: 0;
+    margin: 0;
+    background: none;
+    border: none;
 }
 
 li {
     padding-top: 3px;
+}
+
+img, video {
+    max-width: 100%;
 }
 
 .menu ul {
@@ -175,6 +197,6 @@ li {
     margin-left: 20px;
 }
 
-img, video {
-    max-width: 100%;
+.codehilitetable td {
+    padding: 0;
 }
