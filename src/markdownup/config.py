@@ -7,8 +7,8 @@ from markdownup.helpers import rget
 default_config = {
     'theme': 'default',
     'wsgi': {
-        'bind': '127.0.0.1:8080',
-        'workers': 1
+        'bind': '0.0.0.0:8080',
+        'workers': 4
     },
     'cache': {
         'type': 'builtin',
