@@ -27,6 +27,7 @@ class MarkdownFile(Entry, File):
     def get_response(self, environ):
 
         # relying on the fact that no process handles multiple requests at the same time, we can safely do this
+        return_dir = os.getcwd()
         os.chdir(self.path.parent)
         self.context.root.apply_access(environ)
 
@@ -46,6 +47,8 @@ class MarkdownFile(Entry, File):
                 'config': self.context.config.get('render')
             }
         )
+
+        os.chdir(return_dir)
 
         return Response(
             '200 OK',
