@@ -14,6 +14,12 @@ body {
     gap: 16px;
 }
 
+/* https://code.iamkate.com/html-and-css/fixing-browsers-broken-monospace-font-handling/ */
+pre, code, kbd, samp, tt {
+  font-family: monospace, monospace;
+  font-size: 1em;
+}
+
 .header {
     z-index: 1;
     position: fixed;
@@ -107,7 +113,7 @@ p {
     line-height: 1.4rem;
 }
 
-table, pre {
+table, pre, details {
     background-color: #f2f2f2;
     border: 1px solid #ccc;
     filter: drop-shadow(0px 0px 6px #ccc);
@@ -121,12 +127,6 @@ th, td {
     min-width: 64px;
     padding: 5px 10px;
     border: 1px solid #ccc;
-}
-
-/* https://code.iamkate.com/html-and-css/fixing-browsers-broken-monospace-font-handling/ */
-pre, code, kbd, samp, tt {
-  font-family: monospace, monospace;
-  font-size: 1em;
 }
 
 pre {
@@ -147,6 +147,16 @@ pre code {
     margin: 0;
     background: none;
     border: none;
+}
+
+details {
+    border-radius: 10px;
+    padding: 10px 10px 0 10px;
+}
+
+summary {
+    cursor: pointer;
+    margin-bottom: 10px;
 }
 
 li {
