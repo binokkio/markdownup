@@ -6,12 +6,14 @@ class Cache(ABC):
 
     @staticmethod
     def instance(context) -> 'Cache':
-        cache_config = context.config.get('cache')
-        cache_type = cache_config['type']
+        cache_type = context.config.get('cache', 'type')
 
         if cache_type == 'builtin':
             from markdownup.cache.builtin.builtin_cache import BuiltinCache
             return BuiltinCache(context)
+        elif cache_type == 'redis':
+            from markdownup.cache.redis.redis_cache import RedisCache
+            return RedisCache(context)
         else:
             raise ValueError('Unknown cache type: ' + cache_type)
 

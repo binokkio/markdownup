@@ -30,6 +30,8 @@ def _main():
         if config.get('cache', 'type') == 'builtin':
             Process(target=CacheApplication(config).run).start()
 
+        # TODO if configured process and cache all markdown files
+
         # launch the main MarkdownUp WSGI application
         WsgiApplication(config).run()
 

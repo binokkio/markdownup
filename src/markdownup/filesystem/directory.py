@@ -107,7 +107,7 @@ class Directory(Entry):
             return True  # no access rules defined, access allowed
         if 'authenticated' not in environ['auth']:
             return False  # access rules defined but user has no roles, access denied
-        if self.access_roles & environ['auth']['authenticated']['roles']:  # TODO find first match is probably a faster
+        if self.access_roles & environ['auth']['authenticated']['roles']:  # TODO find first match is probably faster
             return True  # overlap between access roles and user roles, access allowed
         else:
             return False  # no intersect between access roles and user roles, access denied
