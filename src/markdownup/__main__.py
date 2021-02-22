@@ -43,8 +43,11 @@ def _main():
     if len(sys.argv) > 2:
         if sys.argv[1] == '--start-config':
             config = yaml.dump(default_config)
-            with open(sys.argv[2], 'w') as file:
-                file.write(config)
+            target_file = Path(sys.argv[2])
+            if target_file.exists():
+                print('Target file exists, not doing anything')
+                exit(2)
+            target_file.write_text(config)
             exit(0)
         elif sys.argv[1] == '--start-theme':
             target_dir = Path(sys.argv[2])
@@ -62,7 +65,7 @@ def _main():
 
     print('Usage option 1: <path-to-markdown-root-directory>\n'
           'Usage option 2: <path-to-config-file>\n'
-          'Usage option 3: --start-config <path-to-new-file (will be overwritten if exists)>\n'
+          'Usage option 3: --start-config <path-to-new-file>\n'
           'Usage option 4: --start-theme <path-to-new-theme> [<seed-theme>]')
     exit(1)
 
