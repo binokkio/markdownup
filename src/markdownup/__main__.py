@@ -25,7 +25,7 @@ def _main():
             os.chdir(as_path.parent)  # pretend to run from the config's parent dir
         else:
             print(f'No such file or directory: {as_path}')
-            exit(3)
+            exit(1)
 
         # launch a new process for the built in cache server, a bit crude but suffices for now
         if config.get('cache', 'type') == 'builtin':
@@ -53,13 +53,13 @@ def _main():
             target_dir = Path(sys.argv[2])
             if target_dir.exists():
                 print('Target dir exists, not doing anything')
-                exit(2)
+                exit(3)
             theme_name = 'default' if len(sys.argv) == 3 else sys.argv[3]
             theme_dir = Path(__file__).parent / 'themes' / theme_name
             if not theme_dir.exists():
                 theme_names = ', '.join(theme.name for theme in theme_dir.parent.iterdir() if theme.is_dir())
                 print(f'No such theme "{theme_name}", themes: {theme_names}')
-                exit(2)
+                exit(4)
             shutil.copytree(theme_dir, target_dir)
             exit(0)
 
@@ -67,7 +67,7 @@ def _main():
           'Usage option 2: <path-to-config-file>\n'
           'Usage option 3: --start-config <path-to-new-file>\n'
           'Usage option 4: --start-theme <path-to-new-theme> [<seed-theme>]')
-    exit(1)
+    exit(5)
 
 
 if __name__ == '__main__':
