@@ -7,6 +7,7 @@ from pathlib import Path
 import yaml
 from markdownup.cache.builtin.cache_application import CacheApplication
 from markdownup.config import Config, default_config
+from markdownup.markdownup import MarkdownUp
 from markdownup.wsgi_application import WsgiApplication
 
 
@@ -33,7 +34,8 @@ def _main():
         # TODO if configured process and cache all markdown files
 
         # launch the main MarkdownUp WSGI application
-        WsgiApplication(config).run()
+        markdownup = MarkdownUp(config)
+        WsgiApplication(markdownup).run()
 
         # if the above returns we exit normally
         exit(0)
