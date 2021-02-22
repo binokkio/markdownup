@@ -104,7 +104,7 @@ class Keycloak(AuthProvider):
     def _get_redirect_response(location: str, session_id):
         return Response(
             '302 Found', [
-                ('Set-Cookie', f'session={session_id}'),
+                ('Set-Cookie', f'session={session_id}; Max-Age=2592000; Secure; HttpOnly; SameSite=Strict'),
                 ('Location', str(location))
             ], iter([]))
 
