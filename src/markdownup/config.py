@@ -12,7 +12,8 @@ default_config = {
     },
     'cache': {
         'type': 'builtin',
-        'bind': '127.0.0.1:8081'
+        'host': 'localhost',
+        'port': 8081
     },
     'content': {
         'root': '.',

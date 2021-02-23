@@ -1,11 +1,13 @@
 import os
 import shutil
+import signal
 import sys
 from multiprocessing.context import Process
 from pathlib import Path
 
 import yaml
-from markdownup.cache.builtin.cache_application import CacheApplication
+
+from markdownup.cache.builtin.server import BuiltinCacheServer
 from markdownup.config import Config, default_config
 from markdownup.markdownup import MarkdownUp
 from markdownup.wsgi_application import WsgiApplication
@@ -27,15 +29,16 @@ def _main():
             print(f'No such file or directory: {as_path}')
             exit(1)
 
-        # launch a new process for the built in cache server, a bit crude but suffices for now
+        # launch a new process for the built in cache server if configured
         if config.get('cache', 'type') == 'builtin':
-            Process(target=CacheApplication(config).run).start()
+            Process(daemon=True, target=BuiltinCacheServer(config).serve_forever).start()
 
         # TODO if configured process and cache all markdown files
 
         # launch the main MarkdownUp WSGI application
         markdownup = MarkdownUp(config)
-        WsgiApplication(markdownup).run()
+        Process(target=WsgiApplication(markdownup).run).start()
+        signal.pause()  # sleep indefinitely, makes for a cleaner ctrl+c termination
 
         # if the above returns we exit normally
         exit(0)

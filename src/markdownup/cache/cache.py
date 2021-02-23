@@ -9,8 +9,8 @@ class Cache(ABC):
         cache_type = context.config.get('cache', 'type')
 
         if cache_type == 'builtin':
-            from markdownup.cache.builtin.builtin_cache import BuiltinCache
-            return BuiltinCache(context)
+            from markdownup.cache.builtin.client import BuiltinCacheClient
+            return BuiltinCacheClient(context)
         elif cache_type == 'redis':
             from markdownup.cache.redis.redis_cache import RedisCache
             return RedisCache(context)
