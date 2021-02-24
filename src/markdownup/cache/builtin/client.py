@@ -8,7 +8,7 @@ from markdownup.markdownup import MarkdownUp
 class BuiltinCacheClient(Cache):
 
     def __init__(self, context: MarkdownUp):
-        self.server = (context.get('cache', 'host'), context.get('cache', 'port'))
+        self.server = (context.config.get('cache', 'host'), context.config.get('cache', 'port'))
 
     def get(self, key: str) -> Optional[bytes]:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:

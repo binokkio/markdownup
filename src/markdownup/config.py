@@ -30,6 +30,7 @@ default_config = {
         'filename': '.upaccess'
     },
     'markdown': {
+        'cache': False,  # options: False, 'shared', 'worker'
         'extensions': {
             'extra': {},
             'codehilite': {

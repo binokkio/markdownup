@@ -33,7 +33,7 @@ class _BuiltinCacheHandler(BaseRequestHandler):
                 self.request.sendall(value)
         elif action == 'PUT':
             value_length = int.from_bytes(self.request.recv(8), byteorder='big')
-            value = self.request.recv(value_length).decode('UTF-8')
+            value = self.request.recv(value_length)
             self.server.cache[key] = value
             self.request.sendall(b'200')
         elif action == 'DEL':

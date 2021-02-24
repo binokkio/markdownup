@@ -23,12 +23,25 @@ class MarkdownFile(Entry, File):
         self.request_path = '/' + '/'.join(path.parts[len(path.parts) - depth - 1:])
         self.version = self._get_version_details()
         self.search_index = self._get_search_index()
+        self.cache_mode = self.config.get('markdown', 'cache')
+        self.cache_value = None
+
+        if self.cache_mode == 'shared':
+            context.cache.put(self.request_path, self._get_content().encode('UTF-8'))
+        elif self.cache_mode == 'worker':
+            self.cache_value = self._get_content()
+        elif self.cache_mode is not False:
+            raise ValueError(f'Unsupported value for markdown.cache: {self.cache_mode}')
 
     def get_response(self, environ):
 
-        # relying on the fact that no process handles multiple requests at the same time, we can safely do this
-        return_dir = os.getcwd()
-        os.chdir(self.path.parent)
+        if self.cache_mode == 'shared':
+            content = self.context.cache.get(self.request_path).decode('UTF-8')
+        elif self.cache_mode == 'worker':
+            content = self.cache_value
+        else:
+            content = self._get_content()
+
         self.context.root.apply_access(environ)
 
         html = chevron.render(
@@ -37,24 +50,31 @@ class MarkdownFile(Entry, File):
             data={
                 'title': self.name,
                 'file': self,
-                'content': markdown.markdown(
-                    self.path.read_text(),
-                    extensions=self.config.get('markdown', 'extensions').keys(),
-                    extension_configs=self.config.get('markdown', 'extensions')
-                ),
+                'content': content,
                 'root': self.context.root,
                 'auth': environ.get('auth', None),
                 'config': self.context.config.get('render')
             }
         )
 
-        os.chdir(return_dir)
-
         return Response(
             '200 OK',
             [('Content-Type', 'text/html')],
             (bytes(b, 'UTF-8') for b in html.splitlines(keepends=True))
         )
+
+    def _get_content(self):
+        # relying on the fact that no process handles multiple requests at the same time, we can safely do this
+        return_dir = os.getcwd()
+        try:
+            os.chdir(self.path.parent)
+            return markdown.markdown(
+                self.path.read_text(),
+                extensions=self.config.get('markdown', 'extensions').keys(),
+                extension_configs=self.config.get('markdown', 'extensions')
+            )
+        finally:
+            os.chdir(return_dir)
 
     @staticmethod
     def _get_title(md: str) -> str:
