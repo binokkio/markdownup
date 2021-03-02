@@ -55,12 +55,15 @@ class MarkdownFile(Entry, File):
                 'auth': environ.get('auth', None),
                 'config': self.context.config.get('render')
             }
-        )
+        ).encode('UTF-8')
 
         return Response(
             '200 OK',
-            [('Content-Type', 'text/html')],
-            (bytes(b, 'UTF-8') for b in html.splitlines(keepends=True))
+            [
+                ('Content-Type', 'text/html; charset=utf-8'),
+                ('Content-Length', str(len(html)))
+            ],
+            [html]
         )
 
     def _get_content(self):

@@ -66,8 +66,11 @@ class Directory(Entry):
         if not self.is_accessible(environ):
             return None
         self.traversed = True
-        if len(parts) == 0 and self.request_path:
-            raise ResponseException('302 Found', [('Location', self.request_path)])
+        if len(parts) == 0:
+            if self.request_path:
+                raise ResponseException('302 Found', [('Location', self.request_path)])
+            else:
+                return None
         next_part = parts.pop(0)
         if self.index and next_part == self.index.path.name:
             return self.index

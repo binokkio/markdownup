@@ -18,7 +18,7 @@ def test_get():
     response = markdownup.get('/index.md')
 
     assert response.status == '200 OK'
-    assert next(response.body).decode('UTF-8') == '<h1>Hello, World!</h1>\n'
+    assert response.body[0] == b'<h1>Hello, World!</h1>\n<p>This is a markdown file.</p>'
 
 
 def test_prevent_access_outside_root():
@@ -46,7 +46,7 @@ def test_with_fs_theme():
     response = markdownup.get('/index.md')
 
     assert response.status == '200 OK'
-    assert next(response.body).decode('UTF-8') == 'Title goes here: Hello, World!\n'
+    assert response.body[0] == b'Title goes here: Hello, World!\n\nContent goes here:\n\n<h1>Hello, World!</h1>\n<p>This is a markdown file.</p>'
 
 
 def test_serve_non_markdown_file():
@@ -71,7 +71,7 @@ def test_title_not_on_first_line():
     response = markdownup.get('/title_not_on_first_line.md')
 
     assert response.status == '200 OK'
-    assert next(response.body).decode('UTF-8') == 'Title goes here: Title\n'
+    assert response.body[0] == b'Title goes here: Title\n\nContent goes here:\n\n<p>Some text first.</p>\n<h1>Title</h1>'
 
 
 def test_hidden_directory_request_yields_404():
@@ -128,7 +128,7 @@ def test_get_hidden_file_with_proper_config():
     response = markdownup.get('/.hidden.md')
 
     assert response.status == '200 OK'
-    assert next(response.body).decode('UTF-8') == '<p>This file must not be served with the default configuration.</p>'
+    assert response.body[0] == b'<p>This file must not be served with the default configuration.</p>'
 
 
 def test_search():

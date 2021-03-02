@@ -32,7 +32,7 @@ class MarkdownUp:
         print(environ['REQUEST_METHOD'] + ' ' + environ['PATH_INFO'])
         response = self.get_response(environ)
         start_response(response.status, response.headers)
-        yield from response.body
+        return response.body
 
     def get_response(self, environ):
 
@@ -69,7 +69,7 @@ class MarkdownUp:
         abs_path = Path(abs_path)
         rel_path = Path(*abs_path.parts[1:])
 
-        # serve markdown
+        # serve content file
         try:
             file = self.root.resolve(environ, rel_path)
             if file:
@@ -93,12 +93,15 @@ class MarkdownUp:
                     'root': self.root,
                     'auth': environ.get('auth', None)
                 }
-            )
+            ).encode('UTF-8')
 
             return Response(
                 '404 Not Found',
-                [('Content-Type', 'text/html')],
-                (bytes(b, 'UTF-8') for b in html.splitlines(keepends=True))
+                [
+                    ('Content-Type', 'text/html; charset=utf-8'),
+                    ('Content-Length', str(len(html)))
+                ],
+                [html]
             )
 
         # serve plain 404

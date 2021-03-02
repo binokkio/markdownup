@@ -12,6 +12,7 @@ class AssetFile(File):
 
     def get_response(self, environ) -> Response:
 
+        file_size = self.path.stat().st_size
         guessed_mimetype = mimetypes.guess_type(self.path.name)[0]
 
         def reader():
@@ -24,6 +25,9 @@ class AssetFile(File):
 
         return Response(
             '200 OK',
-            [('Content-Type', guessed_mimetype or 'application/octet-stream')],
+            [
+                ('Content-Type', guessed_mimetype or 'application/octet-stream'),
+                ('Content-Length', str(file_size))
+            ],
             reader()
         )
