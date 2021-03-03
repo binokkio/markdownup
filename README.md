@@ -25,7 +25,7 @@ Or
 
 `python -m markdownup --start-config config.yml`
 
-After which the config.yml can be edited to suit your needs and the MarkdownUp server launched with:
+After which the config.yml can be edited to suit your needs, and the MarkdownUp server launched with:
 
 `python -m markdownup config.yml`
 
@@ -83,18 +83,50 @@ access:
     display_name: preferred_username
     roles:
     - realm_access.roles
+    cookie:
+      path: /
+      max_age: 2592000
 ```
 
-|Configuration key       |Description                                                                                       |
-|------------------------|--------------------------------------------------------------------------------------------------|
-|access.filename         |Name of file containing the groups and roles with access to the files parent directory            |
-|access.auth.type        |Type of auth provider, currently only "keycloak" is a valid option                                |
-|access.auth.auth_url    |The root URL of the Keycloak instance to use                                                      |
-|access.auth.redirect_url|The root URL of the MarkdownUp instance to redirect back to from Keycloak                         |
-|access.auth.realm       |The Keycloak realm to use                                                                         |
-|access.auth.client_id   |The Keycloak client id to use                                                                     |
-|access.auth.display_name|The key in the Keycloak access token from which to take the display name of the authenticated user|
-|access.auth.roles       |List of keys in the Keycloak access token from which to take the roles of the authenticated user  |
+|Configuration key         |Description                                                                                       |
+|--------------------------|--------------------------------------------------------------------------------------------------|
+|access.filename           |Name of file containing the groups and roles with access to the files parent directory            |
+|access.auth.type          |Type of auth provider, currently only "keycloak" is a valid option                                |
+|access.auth.auth_url      |The root URL of the Keycloak instance to use                                                      |
+|access.auth.redirect_url  |The root URL of the MarkdownUp instance to redirect back to from Keycloak                         |
+|access.auth.realm         |The Keycloak realm to use                                                                         |
+|access.auth.client_id     |The Keycloak client id to use                                                                     |
+|access.auth.display_name  |The key in the Keycloak access token from which to take the display name of the authenticated user|
+|access.auth.roles         |List of keys in the Keycloak access token from which to take the roles of the authenticated user  |
+|access.auth.cookie.path   |Value for the cookie Path attribute, defaults to '/'                                              |
+|access.auth.cookie.max_age|Value for the cookie Max-Age attribute, defaults to 2592000                                       |
+
+
+### Redis cache
+
+MarkdownUp can use Redis for caching and storing auth sessions, configuration is as follows:
+
+```
+cache:
+  type: redis
+  host: 127.0.0.1
+  port: 6379
+  db: 0
+```
+
+
+### Render config
+
+Extra data can be made available to the HTML templates by adding a `render` section in the config YAML. E.g.:
+
+```
+render:
+  example: value
+  css:
+  - /extra.css
+```
+
+The default theme will include css files configured this way.
 
 
 ## Custom themes

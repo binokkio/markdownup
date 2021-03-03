@@ -24,6 +24,8 @@ class Keycloak(AuthProvider):
         self.display_name_keys = self.display_name_keys.split('.') if self.display_name_keys else None
         self.roles_keys = context.config.get('access', 'auth', 'roles') or []
         self.roles_keys = list(map(lambda s: s.split('.'), self.roles_keys))
+        self.cookie_path = context.config.get('access', 'auth', 'cookie', 'path') or '/'
+        self.cookie_max_age = context.config.get('access', 'auth', 'cookie', 'max_age') or 2592000
 
         base_url = \
             self.config.get('access', 'auth', 'auth_url').rstrip('/') + \
@@ -100,11 +102,13 @@ class Keycloak(AuthProvider):
     def _get_redirect_url(self, environ):
         return self.config.get('access', 'auth', 'redirect_url') + (environ['PATH_INFO'] or '/')
 
-    @staticmethod
-    def _get_redirect_response(location: str, session_id):
+    def _get_redirect_response(self, location: str, session_id):
         return Response(
             '302 Found', [
-                ('Set-Cookie', f'session={session_id}; Max-Age=2592000; Secure; HttpOnly; SameSite=Strict'),
+                ('Set-Cookie', f'session={session_id}; '
+                               f'Path={self.cookie_path}; '
+                               f'Max-Age={self.cookie_max_age}; '
+                               f'Secure; HttpOnly; SameSite=Strict'),
                 ('Location', str(location))
             ], iter([]))
 
