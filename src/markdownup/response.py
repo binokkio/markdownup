@@ -4,8 +4,8 @@ class Response:
         self.headers = headers or []
         self.body = body
 
-        if not body:
-            self.body = iter([bytes(status, 'UTF-8')])
+        if body is None:
+            self.body = [status.encode('UTF-8')]
             self.headers.append(('Content-Type', 'text/plain'))
 
 

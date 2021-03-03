@@ -30,7 +30,7 @@ def test_prevent_access_outside_root():
     response = markdownup.get('../index.md')
 
     assert response.status == '400 Bad Request'
-    assert next(response.body).decode('UTF-8') == '400 Bad Request'
+    assert response.body[0] == b'400 Bad Request'
 
 
 def test_with_fs_theme():

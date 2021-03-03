@@ -29,7 +29,11 @@ class MarkdownUp:
         self.auth_provider: AuthProvider = AuthProvider.instance(self)
 
     def wsgi_app(self, environ, start_response):
-        print(environ['REQUEST_METHOD'] + ' ' + environ['PATH_INFO'])
+
+        print(f'{environ.get("HTTP_X_FORWARDED_FOR", environ["REMOTE_ADDR"])} '
+              f'{environ["REQUEST_METHOD"]} '
+              f'{environ["PATH_INFO"]} ')
+
         response = self.get_response(environ)
         start_response(response.status, response.headers)
         return response.body

@@ -110,7 +110,7 @@ class Keycloak(AuthProvider):
                                f'Max-Age={self.cookie_max_age}; '
                                f'Secure; HttpOnly; SameSite=Strict'),
                 ('Location', str(location))
-            ], iter([]))
+            ], [])
 
     def _get_roles(self, access_token):
         roles = set()
