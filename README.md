@@ -115,6 +115,16 @@ cache:
 ```
 
 
+### Asset ETag
+
+MarkdownUp considers all non-Markdown files to be assets.
+Add `etag_assets: true` in the `content` configuration section to enable asset etagging.
+Asset files inside Git repositories will be tagged with the commit hash in which they were last modified.
+Asset files outside of Git repositories will be tagged with a sha1 hash of their file last modified timestamp.
+The etags are created during MarkdownUp start-up and file modifications are not monitored.
+See the [MDN ETag documentation](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/ETag) for more information on ETags.
+
+
 ### Render config
 
 Extra data can be made available to the HTML templates by adding a `render` section in the config YAML. E.g.:
