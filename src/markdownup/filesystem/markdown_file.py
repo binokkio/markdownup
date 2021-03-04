@@ -20,7 +20,6 @@ class MarkdownFile(File):
 
         self.name = self._get_title(path.read_text()) or self.name
         self.request_path = f'/{path.relative_to(self.context.root_path)}'
-        self.version = self._get_version_details()
         self.search_index = self._get_search_index()
         self.cache_mode = self.config.get('markdown', 'cache')
         self.cache_value = None

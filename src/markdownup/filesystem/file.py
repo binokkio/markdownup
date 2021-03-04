@@ -1,17 +1,25 @@
 import subprocess
 from abc import ABC, abstractmethod
+from pathlib import Path
 
 from markdownup.filesystem.entry import Entry
 from markdownup.response import Response
 
 
-class File(ABC, Entry):
+class File(Entry, ABC):
+
+    def __init__(self, context, path: Path = None):
+        super().__init__(context, path)
+        self.version = self._get_version_details()
 
     @abstractmethod
     def get_response(self, environ) -> Response:
         raise NotImplemented
 
     def _get_version_details(self):
+
+        if not self.path.is_relative_to(self.context.root_path):
+            return None
 
         # define the cwd and arg for the git call assuming .git is not external
         cwd = self.path.parent
@@ -35,6 +43,7 @@ class File(ABC, Entry):
             stdout=subprocess.PIPE,
             stderr=subprocess.DEVNULL
         )
+
         if result.returncode == 0:
             lines = result.stdout.decode('UTF-8').splitlines()
             if lines:
@@ -43,10 +52,9 @@ class File(ABC, Entry):
                         'name': lines[0],
                         'email': lines[1]
                     },
-                    'date': lines[2],
+                    'timestamp': lines[2],
                     'short_hash': lines[3],
                     'hash': lines[4]
                 }
-            return lines
-        else:
-            return None
+
+        return None

@@ -24,7 +24,8 @@ default_config = {
             'README.md',
             'index.md'
         ],
-        'gits': {}
+        'gits': {},
+        'etag_assets': False
     },
     'access': {
         'filename': '.upaccess'
