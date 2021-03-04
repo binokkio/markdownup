@@ -108,7 +108,7 @@ class Keycloak(AuthProvider):
                 ('Set-Cookie', f'session={session_id}; '
                                f'Path={self.cookie_path}; '
                                f'Max-Age={self.cookie_max_age}; '
-                               f'Secure; HttpOnly; SameSite=Strict'),
+                               f'Secure; HttpOnly'),
                 ('Location', str(location))
             ], [])
 
