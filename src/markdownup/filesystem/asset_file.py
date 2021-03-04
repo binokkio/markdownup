@@ -1,14 +1,10 @@
 import mimetypes
-from pathlib import Path
 
 from markdownup.filesystem.file import File
 from markdownup.response import Response
 
 
 class AssetFile(File):
-
-    def __init__(self, path: Path):
-        self.path = path
 
     def get_response(self, environ) -> Response:
 

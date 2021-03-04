@@ -10,9 +10,9 @@ from markdownup.response import ResponseException
 
 class Directory(Entry):
 
-    def __init__(self, context, path: Path = None, depth: int = 0):
+    def __init__(self, context, path: Path = None):
 
-        super().__init__(context, path, depth)
+        super().__init__(context, path)
 
         self.index: Optional[MarkdownFile] = None
         self.directory_map: Dict[str, Directory] = {}
@@ -23,7 +23,7 @@ class Directory(Entry):
         for index_filename in self.config.get('content', 'indices'):
             index_path = self.path / index_filename
             if index_path.is_file():
-                self.index = MarkdownFile(context, index_path, depth)
+                self.index = MarkdownFile(context, index_path)
                 self.name = self.index.name
                 self.request_path = self.index.request_path
                 break
@@ -38,12 +38,12 @@ class Directory(Entry):
                 continue
             name = entry.name
             if entry.is_dir():
-                self.directory_map[name] = Directory(context, entry, depth + 1)
+                self.directory_map[name] = Directory(context, entry)
             elif entry.is_file():
                 if name.endswith('.md'):
-                    self.markdown_file_map[name] = MarkdownFile(context, entry, depth)
+                    self.markdown_file_map[name] = MarkdownFile(context, entry)
                 else:
-                    self.asset_file_map[name] = AssetFile(self.path / name)
+                    self.asset_file_map[name] = AssetFile(context, entry)
 
         # these are updated for every request
         self.children = ChrevronList()

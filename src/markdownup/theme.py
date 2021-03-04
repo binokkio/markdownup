@@ -6,13 +6,13 @@ from markdownup.filesystem.asset_file import AssetFile
 
 class Theme:
 
-    def __init__(self, config):
-        self._path = self._resolve_path(config.get('theme'))
+    def __init__(self, context):
+        self._path = self._resolve_path(context.config.get('theme'))
         self.html: Dict[str, str] = {html.name[:-5]: html.read_text() for html in self._path.glob('*.html')}
         self.files: Dict[Path, AssetFile] = {}
         for path in self._path.glob("**/*"):
             if path.is_file():
-                self.files[path.relative_to(self._path)] = AssetFile(path)
+                self.files[path.relative_to(self._path)] = AssetFile(context, path)
 
     def get_file(self, rel_path: Path) -> Optional[AssetFile]:
         return self.files.get(rel_path, None)

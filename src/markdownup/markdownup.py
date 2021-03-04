@@ -10,7 +10,6 @@ from markdown.inlinepatterns import Pattern
 from markdownup.auth.auth_provider import AuthProvider
 from markdownup.cache.cache import Cache
 from markdownup.config import Config
-from markdownup.filesystem.asset_file import AssetFile
 from markdownup.filesystem.directory import Directory
 from markdownup.response import Response, ResponseException
 from markdownup.search.search_provider import get_search_response
@@ -25,7 +24,7 @@ class MarkdownUp:
         self.exclusions: List[Pattern] = list(map(lambda e: re.compile(e), config.get('content', 'exclusions')))
         self.root_path: Path = Path(config.get('content', 'root')).resolve()
         self.root: Directory = Directory(self)
-        self.theme: Theme = Theme(config)
+        self.theme: Theme = Theme(self)
         self.auth_provider: AuthProvider = AuthProvider.instance(self)
 
     def wsgi_app(self, environ, start_response):
