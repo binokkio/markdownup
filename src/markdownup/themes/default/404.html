@@ -3,7 +3,7 @@
 <html>
     <head>
         <meta charset="utf-8"/>
-        <title>{{title}}</title>
+        <title>404 Not Found</title>
         <link rel="stylesheet" type="text/css" href="/main.css" />
     </head>
 
@@ -13,23 +13,19 @@
         <div class="main">
             <div class="content">
                 <h1>404 Not Found</h1>
-                {{#auth}}
-                    {{#authenticated}}
-                        <p>
+                <p>
+                    {{#auth}}
+                        {{#authenticated}}
                             You might not be authorized to view this page, if it exists.
-                        </p>
-                    {{/authenticated}}
-                    {{^authenticated}}
-                        <p>
+                        {{/authenticated}}
+                        {{^authenticated}}
                             You might need to <a href="?login=yes">log in</a> to view this page, if it exists.
-                        </p>
-                    {{/authenticated}}
-                {{/auth}}
-                {{^auth}}
-                    <p>
+                        {{/authenticated}}
+                    {{/auth}}
+                    {{^auth}}
                         The requested page could not be found.
-                    </p>
-                {{/auth}}
+                    {{/auth}}
+                </p>
             </div>
         </div>
     </body>

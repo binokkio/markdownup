@@ -82,9 +82,9 @@ class MarkdownUp:
             return e.response
 
         # serve theme file
-        theme_file = self.theme.path / rel_path
-        if theme_file.is_file():
-            return AssetFile(theme_file).get_response(environ)
+        theme_file = self.theme.get_file(rel_path)
+        if theme_file:
+            return theme_file.get_response(environ)
 
         # serve theme 404
         if '404' in self.theme.html:
@@ -93,7 +93,6 @@ class MarkdownUp:
                 template=self.theme.html['404'],
                 partials_dict=self.theme.html,
                 data={
-                    'title': '404 Not Found',
                     'root': self.root,
                     'auth': environ.get('auth', None)
                 }

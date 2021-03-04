@@ -16,7 +16,8 @@ class Directory(Entry):
 
         self.index: Optional[MarkdownFile] = None
         self.directory_map: Dict[str, Directory] = {}
-        self.file_map: Dict[str, MarkdownFile] = {}
+        self.markdown_file_map: Dict[str, MarkdownFile] = {}
+        self.asset_file_map: Dict[str, AssetFile] = {}
         self.access_roles: Optional[Set[str]] = self._read_access_file()
 
         for index_filename in self.config.get('content', 'indices'):
@@ -38,8 +39,11 @@ class Directory(Entry):
             name = entry.name
             if entry.is_dir():
                 self.directory_map[name] = Directory(context, entry, depth + 1)
-            elif entry.is_file() and name.endswith('.md'):
-                self.file_map[name] = MarkdownFile(context, entry, depth)
+            elif entry.is_file():
+                if name.endswith('.md'):
+                    self.markdown_file_map[name] = MarkdownFile(context, entry, depth)
+                else:
+                    self.asset_file_map[name] = AssetFile(self.path / name)
 
         # these are updated for every request
         self.children = ChrevronList()
@@ -69,27 +73,24 @@ class Directory(Entry):
         if len(parts) == 0:
             if self.request_path:
                 raise ResponseException('302 Found', [('Location', self.request_path)])
-            else:
-                return None
+            return None
         next_part = parts.pop(0)
         if self.index and next_part == self.index.path.name:
             return self.index
-        if next_part in self.file_map:
-            return self.file_map[next_part]
-        elif next_part in self.directory_map:
+        if next_part in self.directory_map:
             return self.directory_map[next_part]._resolve(environ, parts)
-        else:
-            asset_file_path = self.path / next_part
-            if asset_file_path.is_file():
-                return AssetFile(asset_file_path)
+        elif next_part in self.markdown_file_map:
+            return self.markdown_file_map[next_part]
+        elif next_part in self.asset_file_map:
+            return self.asset_file_map[next_part]
         return None
 
     def _reset(self):
         if self.traversed:
+            self.traversed = False
             for directory in self.directory_map.values():
                 if directory.traversed:
                     directory._reset()
-        self.traversed = False
 
     def apply_access(self, environ):
 
@@ -101,7 +102,7 @@ class Directory(Entry):
 
         self.children = ChrevronList()
         self.children.extend(filter(propagate, self.directory_map.values()))
-        self.children.extend(self.file_map.values())
+        self.children.extend(self.markdown_file_map.values())
         self.children.sort(key=lambda e: e.name)
         self.has_children = len(self.children) > 0
 

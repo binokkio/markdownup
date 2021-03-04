@@ -1,11 +1,21 @@
 from pathlib import Path
+from typing import Optional, Dict
+
+from markdownup.filesystem.asset_file import AssetFile
 
 
 class Theme:
 
     def __init__(self, config):
-        self.path = self._resolve_path(config.get('theme'))
-        self.html = {html.name[:-5]: html.read_text() for html in self.path.glob('*.html')}
+        self._path = self._resolve_path(config.get('theme'))
+        self.html: Dict[str, str] = {html.name[:-5]: html.read_text() for html in self._path.glob('*.html')}
+        self.files: Dict[Path, AssetFile] = {}
+        for path in self._path.glob("**/*"):
+            if path.is_file():
+                self.files[path.relative_to(self._path)] = AssetFile(path)
+
+    def get_file(self, rel_path: Path) -> Optional[AssetFile]:
+        return self.files.get(rel_path, None)
 
     @staticmethod
     def _resolve_path(theme: str):
