@@ -37,12 +37,15 @@ class File(Entry, ABC):
             except ValueError:
                 pass
 
-        result = subprocess.run(
-            ['git', 'log', '-1', '--format=%an%n%ae%n%cI%n%h%n%H', '--', arg],
-            cwd=cwd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.DEVNULL
-        )
+        try:
+            result = subprocess.run(
+                ['git', 'log', '-1', '--format=%an%n%ae%n%cI%n%h%n%H', '--', arg],
+                cwd=cwd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.DEVNULL
+            )
+        except FileNotFoundError:  # git is not installed
+            return None
 
         if result.returncode == 0:
             lines = result.stdout.decode('UTF-8').splitlines()
