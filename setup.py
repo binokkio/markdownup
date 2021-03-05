@@ -8,7 +8,7 @@ setuptools.setup(
     long_description=(Path(__file__).parent / 'README.md').read_text(),
     long_description_content_type='text/markdown',
     keywords=['markdown', 'server'],
-    version='0.0.51',
+    version='0.0.52',
     author='Binokkio',
     author_email='binokkio@b.nana.technology',
     url='https://github.com/binokkio/markdownup',

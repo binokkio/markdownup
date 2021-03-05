@@ -18,7 +18,7 @@ class File(Entry, ABC):
 
     def _get_version_details(self):
 
-        if not self.path.is_relative_to(self.context.root_path):
+        if not str(self.path).startswith(str(self.context.root_path)):  # TODO use path is_relative_to when common
             return None
 
         # define the cwd and arg for the git call assuming .git is not external
