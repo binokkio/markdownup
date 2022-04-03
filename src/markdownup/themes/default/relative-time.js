@@ -12,11 +12,11 @@
 
     function updateTimeElements() {
         let timeElements = document.getElementsByTagName('time');
+        let timeout = 86400000;
         for (let timeElement of timeElements) {
             let date = new Date(timeElement.getAttribute('datetime'));
             let now = new Date();
             let difference = now.getTime() - date.getTime();
-            let timeout = Number.MAX_SAFE_INTEGER;
             for (let timeUnit of timeUnits) {
                 if (!timeUnit) {
                     timeElement.innerText = date.getFullYear() + '-' + (date.getMonth() + 1).toString().padStart(2, 0);
@@ -29,8 +29,8 @@
                     break;
                 }
             }
-            setTimeout(updateTimeElements, timeout);
         }
+        setTimeout(updateTimeElements, timeout);
     }
 
     window.addEventListener('load', updateTimeElements);
